@@ -34,8 +34,10 @@ public class PokerApp {
         private void start() {
             dealer.dealCards();
             for (Player player : players) {
-                System.out.print("Player cards: ");
+                System.out.print("Player" + player.playerNum + " cards: ");
                 printCards(player.getCards());
+                player.getHand(cards);
+                System.out.println("Player" + player.playerNum + " hand: " + player.hand);
             }
         }
         
@@ -48,6 +50,13 @@ public class PokerApp {
                 i++;
             }
             printCards(Arrays.copyOfRange(cards, 0, 3));
+            
+            for (Player player : players) {
+                System.out.print("Player" + player.playerNum + " cards: ");
+                printCards(player.getCards());
+                player.getHand(cards);
+                System.out.println("Player" + player.playerNum + " hand: " + player.hand);
+            }
         }
         
         private void turn() {
@@ -55,6 +64,13 @@ public class PokerApp {
             int[][] turn = dealer.getTurn();
             cards[3] = turn[0];
             printCards(Arrays.copyOfRange(cards, 0, 4));
+            
+            for (Player player : players) {
+                System.out.print("Player" + player.playerNum + " cards: ");
+                printCards(player.getCards());
+                player.getHand(cards);
+                System.out.println("Player" + player.playerNum + " hand: " + player.hand);
+            }
         }
         
         private void river() {
@@ -62,6 +78,13 @@ public class PokerApp {
             int[][] river = dealer.getRiver();
             cards[4] = river[0];
             printCards(cards);
+            
+            for (Player player : players) {
+                System.out.print("Player" + player.playerNum + " cards: ");
+                printCards(player.getCards());
+                player.getHand(cards);
+                System.out.println("Player" + player.playerNum + " hand: " + player.hand);
+            }
         }
         
         private void printCards(int[][] cards) {
@@ -84,7 +107,7 @@ public class PokerApp {
         int chips = 2000;
         Player[] players = new Player[num];
         for (int n = 0; n < num; n++) {
-            players[n] = new Player(chips);
+            players[n] = new Player(n, chips);
         }
         
         // Create dealer
