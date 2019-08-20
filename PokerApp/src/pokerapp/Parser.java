@@ -98,20 +98,23 @@ public class Parser {
         return string_cards;
     }
     
-    public String handToString(String hand) {
+    public String handToString(int[] hand) {
         String str_hand = "";
         
-        switch (hand) {
-            case "1p":
+        switch (hand[0]) {
+            case 0:
+                str_hand = "High card";
+                break;
+            case 1:
                 str_hand = "Pair";
                 break;
-            case "2p":
+            case 2:
                 str_hand = "Two Pair";
                 break;
-            case "3p":
+            case 3:
                 str_hand = "Three of a Kind";
                 break;
-            case "4p":
+            case 4:
                 str_hand = "Four of a Kind";
                 break;
         }

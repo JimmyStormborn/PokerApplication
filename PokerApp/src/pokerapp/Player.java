@@ -1,23 +1,26 @@
 package pokerapp;
 
 /**
+ * Hand values: high-card=0, pair=1, two-pair=2, three-of-a-kind=3,
+ * four-of-a-kind=4
  *
  * @author TheBeast
  */
 public class Player {
     
     // Placeholders
-    String pair = "1p";
-    String two_pair = "2p";
-    String three_of_a_kind = "3p";
-    String four_of_a_kind = "4p";
+    int high = 0;
+    int pair = 1;
+    int two_pair = 2;
+    int three_of_a_kind = 3;
+    int four_of_a_kind = 4;
     
     // Variables
     
     private int[][] cards = new int[2][2];
     private int chips;
     public int playerNum;
-    public String hand = "";
+    public int[] hand = new int[2];
     
     public Player(int playerNum, int chips) {
         this.playerNum = playerNum;
@@ -84,8 +87,6 @@ public class Player {
         }
     }
     
-    
-    
     /*
     Finds what hand the player has.
     
@@ -95,14 +96,24 @@ public class Player {
     public void getHand(int[][] pot) {
         int matchingCards = checkPair(pot);
         
-        if (matchingCards == 1) {                      // Check for pair
-            hand = pair;
-        } else if (matchingCards == 2) {               // Check for two pair
-            hand = two_pair;
-        } else if (matchingCards == 3) {
-            hand = three_of_a_kind;
-        } else if (matchingCards == 4) {
-            hand = four_of_a_kind;
+        switch (matchingCards) {
+            case 1:
+                // Check for pair
+                hand[0] = pair;
+                break;
+            case 2:
+                // Check for two pair
+                hand[0] = two_pair;
+                break;
+            case 3:
+                hand[0] = three_of_a_kind;
+                break;
+            case 4:
+                hand[0] = four_of_a_kind;
+                break;
+            default:
+                hand[0] = high;
+                break;
         }
     }
 }

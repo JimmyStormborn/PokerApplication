@@ -33,17 +33,19 @@ public class PokerApp {
         
         // Deal out the player's cards
         private void start() {
-            //dealer.dealCards();
+            dealer.dealCards();
             for (Player player : players) {
                 System.out.print("Player" + player.playerNum + " cards: ");
                 printCards(player.getCards());
+                player.getHand(cards);
+                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand));
             }
         }
         
         
         // Deal the flop
         private void flop() {
-            //dealer.dealFlop();
+            dealer.dealFlop();
             int[][] flop = dealer.getFlop();
             int i = 0;
             for(int[] card : flop) {
@@ -62,7 +64,7 @@ public class PokerApp {
         
         // Deal the turn
         private void turn() {
-            //dealer.dealTurn();
+            dealer.dealTurn();
             int[][] turn = dealer.getTurn();
             cards[3] = turn[0];
             printCards(Arrays.copyOfRange(cards, 0, 4));
@@ -77,7 +79,7 @@ public class PokerApp {
         
         // Deal the river
         private void river() {
-            //dealer.dealRiver();
+            dealer.dealRiver();
             int[][] river = dealer.getRiver();
             cards[4] = river[0];
             printCards(cards);
@@ -112,13 +114,13 @@ public class PokerApp {
         Player[] players = new Player[num];
         for (int n = 0; n < num; n++) {
             players[n] = new Player(n, chips);
-            players[n].setCard1(test.cards[n][0]);
-            players[n].setCard2(test.cards[n][1]);
+            //players[n].setCard1(test.cards[n][0]);
+            //players[n].setCard2(test.cards[n][1]);
         }
         
         // Create dealer
         Dealer dealer = new Dealer(players);
-        dealer.deck = test.pot;
+        //dealer.deck = test.pot;
         
         //Create round
         Round round;
