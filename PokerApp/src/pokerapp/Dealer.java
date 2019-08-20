@@ -8,7 +8,8 @@ import java.util.*;
  */
 public class Dealer {
     private Player[] players;
-    private int[][] deck = makeDeck();
+    // private int[][] deck = makeDeck();
+    public int[][] deck;
     private int pos = 0;
     final private int[][] flop = new int[3][2];
     final private int[][] turn = new int [1][2];
