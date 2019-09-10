@@ -114,7 +114,10 @@ public class Parser {
             case 3:
                 str_hand = "Three of a Kind";
                 break;
-            case 4:
+            case 5:
+                str_hand = "Flush";
+                break;
+            case 7:
                 str_hand = "Four of a Kind";
                 break;
         }

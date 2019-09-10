@@ -8,8 +8,7 @@ import java.util.*;
  */
 public class Dealer {
     private Player[] players;
-    private int[][] deck = makeDeck();
-    //public int[][] deck;
+    public int[][] deck = makeDeck();
     private int pos = 0;
     final private int[][] flop = new int[3][2];
     final private int[][] turn = new int [1][2];
@@ -119,7 +118,7 @@ public class Dealer {
      * 
      * @return The shuffled deck. 
      */
-    private int[][] makeDeck() {
+    public int[][] makeDeck() {
         int[][] cards = new int[52][2];
         int i = 0;
         
@@ -138,7 +137,7 @@ public class Dealer {
     /**
      * Shuffles the cards.
      */
-    private void shuffleDeck() {
+    public void shuffleDeck() {
         Random rand = new Random();
         int card1;
         int card2;

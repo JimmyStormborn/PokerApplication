@@ -13,7 +13,12 @@ public class Player {
     int pair = 1;
     int two_pair = 2;
     int three_of_a_kind = 3;
-    int four_of_a_kind = 4;
+    int straight = 4;
+    int flush = 5;
+    int full_house = 6;
+    int four_of_a_kind = 7;
+    int straight_flush = 8;
+    int royal_flush = 9;
     
     // Variables
     
@@ -56,7 +61,7 @@ public class Player {
     returns: 
         - int, 1 for pair, 2 for two pair, 0 for no pair.
     */
-    public int checkPair(int[][] pot) {
+    private int checkPair(int[][] pot) {
         int matches1 = 0; // matches with first card
         int matches2 = 0; // matches with second card
         
@@ -88,6 +93,30 @@ public class Player {
     }
     
     /*
+    Check for a flush
+    */
+    private boolean checkFlush(int[][] pot) {
+        int matching = 1;
+        
+        for (int i = 0; i < cards.length; i += 1) {
+            if (cards[i][0] == cards[cards.length-1-i][0]) {
+                matching += 1;
+            }
+            for (int j = 0; j < pot.length; j+= 1) {
+                if (cards[i][0] == pot[j][0]) {
+                    matching += 1;
+                }
+                if (matching == 5) {
+                    return true;
+                }
+            }
+            matching = 1;
+        }
+        
+        return false;
+    }
+    
+    /*
     Finds what hand the player has.
     
     parameters:
@@ -96,24 +125,32 @@ public class Player {
     public void getHand(int[][] pot) {
         int matchingCards = checkPair(pot);
         
-        switch (matchingCards) {
-            case 1:
-                // Check for pair
-                hand[0] = pair;
-                break;
-            case 2:
-                // Check for two pair
-                hand[0] = two_pair;
-                break;
-            case 3:
-                hand[0] = three_of_a_kind;
-                break;
-            case 4:
-                hand[0] = four_of_a_kind;
-                break;
-            default:
-                hand[0] = high;
-                break;
+        if (checkFlush(pot)) {
+            
+            hand[0] = flush;
+            
+        } else {
+        
+            switch (matchingCards) {
+                case 1:
+                    // Check for pair
+                    hand[0] = pair;
+                    break;
+                case 2:
+                    // Check for two pair
+                    hand[0] = two_pair;
+                    break;
+                case 3:
+                    hand[0] = three_of_a_kind;
+                    break;
+                case 4:
+                    hand[0] = four_of_a_kind;
+                    break;
+                default:
+                    hand[0] = high;
+                    break;
+            }
+            
         }
     }
 }
