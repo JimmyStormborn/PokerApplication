@@ -34,7 +34,7 @@ public class PokerApp {
         // Deal out the player's cards
         private void start() {
             for (Player player : players) {
-                System.out.print("Player" + player.playerNum + " cards: ");
+                System.out.print("\nPlayer" + player.playerNum + " cards: ");
                 printCards(player.getCards());
                 player.getHand(cards);
                 System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand));
@@ -51,10 +51,11 @@ public class PokerApp {
                 this.cards[i] = card;
                 i++;
             }
+            System.out.println("\nFlop:");
             printCards(Arrays.copyOfRange(cards, 0, 3));
             
             for (Player player : players) {
-                System.out.print("Player" + player.playerNum + " cards: ");
+                System.out.print("\nPlayer" + player.playerNum + " cards: ");
                 printCards(player.getCards());
                 player.getHand(cards);
                 System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand));
@@ -66,10 +67,11 @@ public class PokerApp {
             dealer.dealTurn();
             int[][] turn = dealer.getTurn();
             cards[3] = turn[0];
+            System.out.println("\nTurn:");
             printCards(Arrays.copyOfRange(cards, 0, 4));
             
             for (Player player : players) {
-                System.out.print("Player" + player.playerNum + " cards: ");
+                System.out.print("\nPlayer" + player.playerNum + " cards: ");
                 printCards(player.getCards());
                 player.getHand(cards);
                 System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand));
@@ -81,10 +83,11 @@ public class PokerApp {
             dealer.dealRiver();
             int[][] river = dealer.getRiver();
             cards[4] = river[0];
+            System.out.println("\nRiver:");
             printCards(cards);
             
             for (Player player : players) {
-                System.out.print("Player" + player.playerNum + " cards: ");
+                System.out.print("\nPlayer" + player.playerNum + " cards: ");
                 printCards(player.getCards());
                 player.getHand(cards);
                 System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand));
@@ -116,9 +119,15 @@ public class PokerApp {
                     // Tests
                     Test test = new Test();
                     
-                    System.out.print("\nEnter your test number (0,1,2,3,...): ");
+                    System.out.print("\nEnter your test type (0 = matches): ");
                     int test_num = scan.nextInt();
-                    test.runTest(test_num);
+                    
+                    System.out.print("\nEnter your test number: ");
+                    int t = scan.nextInt();
+                    if (!(test.runTest(test_num, t))) {
+                        System.err.println("No such test");
+                        return;
+                    }
                     
                     int num = test.num;
                     
