@@ -11,8 +11,8 @@ public class PokerApp {
     private class Round {
         final private Player[] players;
         final private Dealer dealer;
-        private int chip = 0;
-        final private int[][] cards = new int[5][2];
+        private final int chip = 0;
+        private int[][] cards = new int[5][2];
         final private Parser parser = new Parser();
         
         final private int min = 25;
@@ -182,6 +182,7 @@ public class PokerApp {
                     while (r <= rounds) {
                         System.out.print("\nRound " + r + ":\n");
                         dealer = new Dealer(players);
+                        round.cards = new int[5][2];
                         dealer.dealCards();
                         round.run();
                         r += 1;

@@ -115,11 +115,126 @@ public class Parser {
                 str_hand = "Three of a Kind";
                 break;
             case 5:
-                str_hand = "Flush";
+                switch (hand[1]) {
+                    case 6:
+                        str_hand = "Six high flush";
+                        break;
+                    case 7:
+                        str_hand = "Seven high flush";
+                        break;
+                    case 8:
+                        str_hand = "Eight high flush";
+                        break;
+                    case 9:
+                        str_hand = "Nine high flush";
+                        break;
+                    case 10:
+                        str_hand = "Ten high flush";
+                        break;
+                    case 11:
+                        str_hand = "Jack high flush";
+                        break;
+                    case 12:
+                        str_hand = "Queen high flush";
+                        break;
+                    case 13:
+                        str_hand = "King high flush";
+                        break;
+                    case 14:
+                        str_hand = "Ace high flush";
+                        break;
+                }
                 break;
             case 7:
                 str_hand = "Four of a Kind";
                 break;
+        }
+        
+        if (hand[0] != 5) {
+            switch (hand[1]) {
+                case 2:
+                    str_hand += " of twos";
+                    break;
+                case 3:
+                    str_hand += " of threes";
+                    break;
+                case 4:
+                    str_hand += " of fours";
+                    break;
+                case 5:
+                    str_hand += " of fives";
+                    break;
+                case 6:
+                    str_hand += " of sixes";
+                    break;
+                case 7:
+                    str_hand += " of sevens";
+                    break;
+                case 8:
+                    str_hand += " of eights";
+                    break;
+                case 9:
+                    str_hand += " of nines";
+                    break;
+                case 10:
+                    str_hand += " of tens";
+                    break;
+                case 11:
+                    str_hand += " of jacks";
+                    break;
+                case 12:
+                    str_hand += " of queens";
+                    break;
+                case 13:
+                    str_hand += " of kings";
+                    break;
+                case 14:
+                    str_hand += " of aces";
+                    break;
+            }
+            if (hand[2] != 0) {
+                switch (hand[2]) {
+                    case 2:
+                        str_hand += " and twos";
+                        break;
+                    case 3:
+                        str_hand += " and threes";
+                        break;
+                    case 4:
+                        str_hand += " and fours";
+                        break;
+                    case 5:
+                        str_hand += " and fives";
+                        break;
+                    case 6:
+                        str_hand += " and sixes";
+                        break;
+                    case 7:
+                        str_hand += " and sevens";
+                        break;
+                    case 8:
+                        str_hand += " and eights";
+                        break;
+                    case 9:
+                        str_hand += " and nines";
+                        break;
+                    case 10:
+                        str_hand += " and tens";
+                        break;
+                    case 11:
+                        str_hand += " and jacks";
+                        break;
+                    case 12:
+                        str_hand += " and queens";
+                        break;
+                    case 13:
+                        str_hand += " and kings";
+                        break;
+                    case 14:
+                        str_hand += " and aces";
+                        break;
+                }
+            }
         }
         
         return str_hand;
