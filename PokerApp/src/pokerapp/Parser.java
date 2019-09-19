@@ -3,6 +3,10 @@ package pokerapp;
 /**
  * suit: S = 0, C = 1, D = 2, H = 3
  * value: J = 11, Q = 12, K = 13, A = 14
+ * 
+ * Hand values: high-card=0, pair=1, two-pair=2, three-of-a-kind=3,
+ * straight=4, flush=5, full-house=6, four-of-a-kind=7, straight-flush=8,
+ * royal-flush=9
  *
  * @author TheBeast
  */
@@ -101,6 +105,38 @@ public class Parser {
     public String handToString(int[] hand) {
         String str_hand = "";
         
+        if (hand[0] == 4 || hand[0] == 5 || hand[0] == 8 || hand[0] == 9) {
+            switch (hand[1]) {
+                    case 6:
+                        str_hand = "Six high ";
+                        break;
+                    case 7:
+                        str_hand = "Seven high ";
+                        break;
+                    case 8:
+                        str_hand = "Eight high ";
+                        break;
+                    case 9:
+                        str_hand = "Nine high ";
+                        break;
+                    case 10:
+                        str_hand = "Ten high ";
+                        break;
+                    case 11:
+                        str_hand = "Jack high ";
+                        break;
+                    case 12:
+                        str_hand = "Queen high ";
+                        break;
+                    case 13:
+                        str_hand = "King high ";
+                        break;
+                    case 14:
+                        str_hand = "Ace high ";
+                        break;
+                }
+        }
+        
         switch (hand[0]) {
             case 0:
                 str_hand = "High card";
@@ -114,43 +150,27 @@ public class Parser {
             case 3:
                 str_hand = "Three of a Kind";
                 break;
+            case 4:
+                str_hand += "straight";
+                break;
             case 5:
-                switch (hand[1]) {
-                    case 6:
-                        str_hand = "Six high flush";
-                        break;
-                    case 7:
-                        str_hand = "Seven high flush";
-                        break;
-                    case 8:
-                        str_hand = "Eight high flush";
-                        break;
-                    case 9:
-                        str_hand = "Nine high flush";
-                        break;
-                    case 10:
-                        str_hand = "Ten high flush";
-                        break;
-                    case 11:
-                        str_hand = "Jack high flush";
-                        break;
-                    case 12:
-                        str_hand = "Queen high flush";
-                        break;
-                    case 13:
-                        str_hand = "King high flush";
-                        break;
-                    case 14:
-                        str_hand = "Ace high flush";
-                        break;
-                }
+                str_hand += "flush";
+                break;
+            case 6:
+                str_hand = "Full house";
                 break;
             case 7:
                 str_hand = "Four of a Kind";
                 break;
+            case 8:
+                str_hand += "straight flush";
+                break;
+            case 9:
+                str_hand += "royal flush";
+                break;
         }
         
-        if (hand[0] != 5) {
+        if (hand[0] != 5 && hand[0] != 4 && hand[0] != 8 && hand[0] != 9) {
             switch (hand[1]) {
                 case 2:
                     str_hand += " of twos";

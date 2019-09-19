@@ -33,12 +33,7 @@ public class PokerApp {
         
         // Deal out the player's cards
         private void start() {
-            for (Player player : players) {
-                System.out.print("\nPlayer" + player.playerNum + " cards: ");
-                printCards(player.getCards());
-                player.getHand(cards);
-                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand));
-            }
+            printHands();
         }
         
         
@@ -54,12 +49,7 @@ public class PokerApp {
             System.out.println("\nFlop:");
             printCards(Arrays.copyOfRange(cards, 0, 3));
             
-            for (Player player : players) {
-                System.out.print("\nPlayer" + player.playerNum + " cards: ");
-                printCards(player.getCards());
-                player.getHand(cards);
-                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand));
-            }
+            printHands();
         }
         
         // Deal the turn
@@ -70,12 +60,7 @@ public class PokerApp {
             System.out.println("\nTurn:");
             printCards(Arrays.copyOfRange(cards, 0, 4));
             
-            for (Player player : players) {
-                System.out.print("\nPlayer" + player.playerNum + " cards: ");
-                printCards(player.getCards());
-                player.getHand(cards);
-                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand));
-            }
+            printHands();
         }
         
         // Deal the river
@@ -86,16 +71,66 @@ public class PokerApp {
             System.out.println("\nRiver:");
             printCards(cards);
             
+            printHands();
+            findWinner();
+        }
+        
+        private void findWinner() {
+            int winner = -1;
+            ArrayList<Integer> draw = new ArrayList<>();
+            int[] winning_hand = new int[6];
             for (Player player : players) {
-                System.out.print("\nPlayer" + player.playerNum + " cards: ");
-                printCards(player.getCards());
-                player.getHand(cards);
-                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand));
+                if (player.hand_value[0] > winning_hand[0]) {
+                    winner = player.playerNum;
+                    winning_hand = player.hand_value;
+                } else if (player.hand_value[0] == winning_hand[0]) {
+                    if (player.hand_value[1] > winning_hand[1]) {
+                        winner = player.playerNum;
+                        winning_hand = player.hand_value;
+                    } else if (player.hand_value[1] == winning_hand[1]) {
+                        if (player.hand_value[2] > winning_hand[2]) {
+                            winner = player.hand_value[2];
+                        } else if (player.hand_value[2] == winning_hand[2]) {
+                            if (!draw.contains(winner) && winner >= 0) {
+                                draw.add(winner);
+                            }
+                            if (!draw.contains(player.playerNum)) {
+                                draw.add(player.playerNum);
+                            }
+                            winner = -1;
+                        }
+                    }
+                }
+            }
+            if (winner < 0) {
+                if (!draw.isEmpty()) {
+                    System.out.print("\nDraw between ");
+                    boolean flag = false;
+                    for (int d : draw) {
+                        if (flag) {
+                            System.out.print("and ");
+                        }
+                        System.out.print("player " + d + " ");
+                        flag = true;
+                    }
+                    System.out.println(".");
+                }
+            } else {
+                System.out.println("\nWinner is " + winner + ", hand = " + parser.handToString(winning_hand));
             }
         }
         
         private void printCards(int[][] cards) {
             System.out.println(parser.cardsToString(cards));
+        }
+        
+        private void printHands() {
+            for (Player player : players) {
+                System.out.print("\nPlayer" + player.playerNum + " cards: ");
+                printCards(player.getCards());
+                player.getHand(cards);
+                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand_value));
+            }
         }
     }
     
