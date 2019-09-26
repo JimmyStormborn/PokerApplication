@@ -39,7 +39,7 @@ public class PokerApp {
         
         // Deal out the player's cards
         private void start() {
-            dealer.dealCards();
+//            dealer.dealCards();
             printHands();
         }
         
@@ -211,16 +211,22 @@ public class PokerApp {
                         players[n] = new Player(n, chips);
                     }
                     
+                    // Create dealer
+                    Dealer dealer = new Dealer(players);
+                    
                     //Create round
                     Round round;
-                    round = app.new Round(players);
+                    round = app.new Round(players, dealer);
                     
                     // Run rounds
                     int r = 1;
                     while (r <= rounds) {
                         System.out.print("\nRound " + r + ":\n");
                         round.cards = new int[5][2];
+                        dealer.dealCards();
                         round.run();
+                        dealer = new Dealer(players);
+                        round = app.new Round(players, dealer);
                         r += 1;
                     }
                     
