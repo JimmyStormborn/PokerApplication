@@ -19,6 +19,11 @@ public class PokerApp {
         final private int small = 25;
         final private int big = 50;
         
+        private Round(Player[] players) {
+            this.players = players;
+            dealer = new Dealer(players);
+        }
+        
         private Round(Player[] players, Dealer dealer) {
             this.players = players;
             this.dealer = dealer;
@@ -29,10 +34,12 @@ public class PokerApp {
             flop();
             turn();
             river();
+            findWinner();
         }
         
         // Deal out the player's cards
         private void start() {
+            dealer.dealCards();
             printHands();
         }
         
@@ -72,7 +79,6 @@ public class PokerApp {
             printCards(cards);
             
             printHands();
-            findWinner();
         }
         
         private void findWinner() {
@@ -203,22 +209,17 @@ public class PokerApp {
                     Player[] players = new Player[num];
                     for (int n = 0; n < num; n++) {
                         players[n] = new Player(n, chips);
-                    }       
-
-                    // Create dealer
-                    Dealer dealer = new Dealer(players);
+                    }
                     
                     //Create round
                     Round round;
-                    round = app.new Round(players, dealer);
+                    round = app.new Round(players);
                     
                     // Run rounds
                     int r = 1;
                     while (r <= rounds) {
                         System.out.print("\nRound " + r + ":\n");
-                        dealer = new Dealer(players);
                         round.cards = new int[5][2];
-                        dealer.dealCards();
                         round.run();
                         r += 1;
                     }
