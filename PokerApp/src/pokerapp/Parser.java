@@ -8,7 +8,8 @@ package pokerapp;
  * straight=4, flush=5, full-house=6, four-of-a-kind=7, straight-flush=8,
  * royal-flush=9
  *
- * @author TheBeast
+ * @author James Bird-Sycamore
+ * @date 22/03/2020
  */
 public class Parser {
     
@@ -16,11 +17,11 @@ public class Parser {
         
     }
     
-    public String cardsToString(int[][] cards) {
+    public String cardsToString(Card[] cards) {
         String string_cards = "";
-        for(int[] card : cards) {
+        for(Card card : cards) {
             // Value
-            switch (card[1]) {
+            switch (card.value) {
                 case 11:
                     string_cards += "J";
                     break;
@@ -34,12 +35,12 @@ public class Parser {
                     string_cards += "A";
                     break;
                 default:
-                    string_cards += Integer.toString(card[1]);
+                    string_cards += Integer.toString(card.value);
                     break;
             }
             
             // Suit
-            switch (card[0]) {
+            switch (card.suit) {
                 case 0:
                     string_cards += "S";
                     break;
@@ -59,11 +60,11 @@ public class Parser {
         return string_cards;
     }
     
-    public String cardToString(int[] card) {
+    public String cardToString(Card card) {
         String string_cards = "";
         
         // Value
-        switch (card[1]) {
+        switch (card.value) {
             case 11:
                 string_cards += "J";
                 break;
@@ -77,12 +78,12 @@ public class Parser {
                 string_cards += "A";
                 break;
             default:
-                string_cards += Integer.toString(card[1]);
+                string_cards += Integer.toString(card.value);
                 break;
         }
 
         // Suit
-        switch (card[0]) {
+        switch (card.suit) {
             case 0:
                 string_cards += "S";
                 break;

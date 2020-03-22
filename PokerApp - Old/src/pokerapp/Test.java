@@ -2,19 +2,17 @@ package pokerapp;
 
 /**
  *
- * @author James Bird-Sycamore
- * @date 22/03/2020
+ * @author kylar
  */
 public class Test {
     
     public int num;
-    public Card[] pot;
-    public Card[][] cards;
+    public int[][] pot;
+    public int[][][] cards;
     
     
     public Test() {}
     
-    /**
     public boolean runTest(int test_num, int test) {
         switch(test_num) {
             case 0:
@@ -133,5 +131,4 @@ public class Test {
         
         return true;
     }
-    */
 }

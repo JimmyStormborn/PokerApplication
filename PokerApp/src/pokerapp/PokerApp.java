@@ -3,8 +3,10 @@ package pokerapp;
 import java.util.*;
 
 /**
+ * @desc 
  *
- * @author TheBeast
+ * @author James Bird-Sycamore
+ * @date 22/03/2020
  */
 public class PokerApp {
     
@@ -12,7 +14,7 @@ public class PokerApp {
         final private Player[] players;
         final private Dealer dealer;
         private final int chip = 0;
-        private int[][] cards = new int[5][2];
+        private Card[] cards = new Card[5];
         final private Parser parser = new Parser();
         
         final private int min = 25;
@@ -34,7 +36,7 @@ public class PokerApp {
             flop();
             turn();
             river();
-            findWinner();
+//            findWinner();
         }
         
         // Deal out the player's cards
@@ -47,9 +49,9 @@ public class PokerApp {
         // Deal the flop
         private void flop() {
             dealer.dealFlop();
-            int[][] flop = dealer.getFlop();
+            Card[] flop = dealer.getFlop();
             int i = 0;
-            for(int[] card : flop) {
+            for(Card card : flop) {
                 this.cards[i] = card;
                 i++;
             }
@@ -62,7 +64,7 @@ public class PokerApp {
         // Deal the turn
         private void turn() {
             dealer.dealTurn();
-            int[][] turn = dealer.getTurn();
+            Card[] turn = dealer.getTurn();
             cards[3] = turn[0];
             System.out.println("\nTurn:");
             printCards(Arrays.copyOfRange(cards, 0, 4));
@@ -73,7 +75,7 @@ public class PokerApp {
         // Deal the river
         private void river() {
             dealer.dealRiver();
-            int[][] river = dealer.getRiver();
+            Card[] river = dealer.getRiver();
             cards[4] = river[0];
             System.out.println("\nRiver:");
             printCards(cards);
@@ -81,6 +83,7 @@ public class PokerApp {
             printHands();
         }
         
+        /**
         private void findWinner() {
             int winner = -1;
             ArrayList<Integer> draw = new ArrayList<>();
@@ -125,8 +128,9 @@ public class PokerApp {
                 System.out.println("\nWinner is " + winner + ", hand = " + parser.handToString(winning_hand));
             }
         }
+        */
         
-        private void printCards(int[][] cards) {
+        private void printCards(Card[] cards) {
             System.out.println(parser.cardsToString(cards));
         }
         
@@ -134,8 +138,8 @@ public class PokerApp {
             for (Player player : players) {
                 System.out.print("\nPlayer" + player.playerNum + " cards: ");
                 printCards(player.getCards());
-                player.getHand(cards);
-                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand_value));
+//                player.getHand(cards);
+//                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand_value));
             }
         }
     }
@@ -157,6 +161,7 @@ public class PokerApp {
            
             switch (scan.nextLine()) {
                 case "y":{
+                    /*
                     // Tests
                     Test test = new Test();
                     
@@ -177,8 +182,8 @@ public class PokerApp {
                     Player[] players = new Player[num];
                     for (int n = 0; n < num; n++) {
                         players[n] = new Player(n, chips);
-                        players[n].setCard1(test.cards[n][0]);
-                        players[n].setCard2(test.cards[n][1]);
+//                        players[n].setCard1(test.cards[n].suit);
+//                        players[n].setCard2(test.cards[n].value);
                     }       
                     
                     // Create dealer
@@ -193,7 +198,9 @@ public class PokerApp {
                     round.run();
                     
                     flag = false;
-                        break;
+*/
+                    System.out.println("Testing not implemented");
+                    break;
                     }
                 case "n":{
                     // Input
@@ -213,6 +220,7 @@ public class PokerApp {
                     
                     // Create dealer
                     Dealer dealer = new Dealer(players);
+                    dealer.shuffleDeck();
                     
                     //Create round
                     Round round;
@@ -222,7 +230,7 @@ public class PokerApp {
                     int r = 1;
                     while (r <= rounds) {
                         System.out.print("\nRound " + r + ":\n");
-                        round.cards = new int[5][2];
+                        round.cards = new Card[5];
                         dealer.dealCards();
                         round.run();
                         dealer = new Dealer(players);

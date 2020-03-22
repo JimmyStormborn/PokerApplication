@@ -7,11 +7,12 @@ import java.util.*;
  * straight=4, flush=5, full-house=6, four-of-a-kind=7, straight-flush=8,
  * royal-flush=9
  *
- * @author TheBeast
+ * @author James Bird-Sycamore
  */
 public class Player {
     
     // Placeholders
+    
     int high = 0;
     int pair = 1;
     int two_pair = 2;
@@ -25,11 +26,11 @@ public class Player {
     
     // Variables
     
-    private int[][] cards = new int[2][2];
+    private Card[] cards = new Card[2];
     private int chips;
     public int playerNum;
-    public int[] hand = new int[5];
-    public int[] hand_value = new int[6];
+    public Card[] hand = new Card[5];
+    public int hand_value;
     
     public Player(int playerNum, int chips) {
         this.playerNum = playerNum;
@@ -40,26 +41,25 @@ public class Player {
         this(playerNum, 2000);
     }
     
-    public int[][] getCards() {
+    public Card[] getCards() {
         return this.cards;
     }
     
-    public void setCards(int[] card1, int[] card2) {
+    public void setCards(Card card1, Card card2) {
         setCard1(card1);
         setCard2(card2);
     }
     
-    public void setCard1(int[] card1) {
+    public void setCard1(Card card1) {
         this.cards[0] = card1;
     }
     
-    public void setCard2(int[] card2) {
+    public void setCard2(Card card2) {
         this.cards[1] = card2;
     }
     
     /*
     Check for a flush
-    */
     private int checkFlush(int[][] pot) {
         int matching = 1;
         int f = 0;
@@ -105,10 +105,11 @@ public class Player {
         return f;
     }
     
+    */
+    
     
     /*
     Checks if the player has any matches.
-    */
     public ArrayList<ArrayList<int[]>> checkMatches(int[][] pot) {
         ArrayList<ArrayList<int[]>> matches = new ArrayList<>();
         ArrayList<int[]> m;
@@ -174,11 +175,11 @@ public class Player {
         return matches;
     }
     
+    */
     
     
     /*
     Checks if the player has any pairs.
-    */
     public int[] checkPair(ArrayList<ArrayList<int[]>> matches) {
         int[] pairs = new int[3];
         
@@ -239,6 +240,9 @@ public class Player {
         return pairs;
     }
     
+    */
+    
+    /*
     private ArrayList<ArrayList<int[]>> addToStraights(ArrayList<ArrayList<int[]>> straights, int[] card1, int[] card2) {
         ArrayList<int[]> straight;
         boolean flag = true;
@@ -282,7 +286,9 @@ public class Player {
         
         return straights;
     }
+    */
     
+    /*
     private int checkStraight(int[][] pot) {
         int value = 0;
         ArrayList<ArrayList<int[]>> straights = new ArrayList<>();
@@ -338,32 +344,32 @@ public class Player {
         
         return value;
     }
+    */
     
     /*
     Finds what hand the player has.
     
     parameters:
         - pot, the cards in the pot.
-    */
     public void getHand(int[][] pot) {
         int s = checkStraight(pot);
         int f = checkFlush(pot);
         
         if (s > 0 && f > 0) {
             if (f == 14 && s == 14) {
-                hand_value[0] = royal_flush;
+//                hand_value[0] = royal_flush;
             }
-            hand_value[0] = straight_flush;
-            hand_value[1] = s;
+//            hand_value[0] = straight_flush;
+//            hand_value[1] = s;
         } else if (s > 0) {
             
-            hand_value[0] = straight;
-            hand_value[1] = s;
+//            hand_value[0] = straight;
+//            hand_value[1] = s;
             
         } else if (f > 0) {
 
-            hand_value[0] = flush;
-            hand_value[1] = f;
+//            hand_value[0] = flush;
+//            hand_value[1] = f;
 
         } else {
 
@@ -371,16 +377,17 @@ public class Player {
 
             if (matches.size() > 0) {
                 int[] m = checkPair(matches);
-                hand_value = m;
+//                hand_value = m;
             } else {
-                hand_value[0] = high;
+//                hand_value[0] = high;
                 if (cards[0][1] > cards[1][1]) {
-                    hand_value[1] = cards[0][1];
+//                    hand_value[1] = cards[0][1];
                 } else {
-                    hand_value[1] = cards[1][1];
+//                    hand_value[1] = cards[1][1];
                 }
             }
             
         }
     }
+*/
 }
