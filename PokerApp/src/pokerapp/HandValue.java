@@ -15,6 +15,7 @@ package pokerapp;
 public class HandValue {
     int hand_value = 0;
     Card[] hand = new Card[5];
+    Player player;
     
     public HandValue() {
         

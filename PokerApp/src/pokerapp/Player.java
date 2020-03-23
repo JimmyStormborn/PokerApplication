@@ -45,6 +45,14 @@ public class Player {
         return this.cards;
     }
     
+    public Card getCard1() {
+        return this.cards[0];
+    }
+    
+    public Card getCard2() {
+        return this.cards[1];
+    }
+    
     public void setCards(Card card1, Card card2) {
         setCard1(card1);
         setCard2(card2);

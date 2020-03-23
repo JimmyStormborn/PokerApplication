@@ -1,6 +1,7 @@
 package pokerapp;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @desc 
@@ -41,8 +42,7 @@ public class PokerApp {
         
         // Deal out the player's cards
         private void start() {
-//            dealer.dealCards();
-            printHands();
+//            printHands();
         }
         
         
@@ -55,10 +55,10 @@ public class PokerApp {
                 this.cards[i] = card;
                 i++;
             }
-            System.out.println("\nFlop:");
-            printCards(Arrays.copyOfRange(cards, 0, 3));
+//            System.out.println("\nFlop:");
+//            printCards(Arrays.copyOfRange(cards, 0, 3));
             
-            printHands();
+//            printHands();
         }
         
         // Deal the turn
@@ -66,10 +66,10 @@ public class PokerApp {
             dealer.dealTurn();
             Card[] turn = dealer.getTurn();
             cards[3] = turn[0];
-            System.out.println("\nTurn:");
-            printCards(Arrays.copyOfRange(cards, 0, 4));
+//            System.out.println("\nTurn:");
+//            printCards(Arrays.copyOfRange(cards, 0, 4));
             
-            printHands();
+//            printHands();
         }
         
         // Deal the river
@@ -77,10 +77,10 @@ public class PokerApp {
             dealer.dealRiver();
             Card[] river = dealer.getRiver();
             cards[4] = river[0];
-            System.out.println("\nRiver:");
-            printCards(cards);
+//            System.out.println("\nRiver:");
+//            printCards(cards);
             
-            printHands();
+//            printHands();
         }
         
         /**
@@ -155,12 +155,12 @@ public class PokerApp {
         PokerApp app = new PokerApp();
         Scanner scan = new Scanner(System.in);
         
-        boolean flag = true;
-        while (flag) {
-            System.out.print("Do you want to run a test (y/n): ");
-           
-            switch (scan.nextLine()) {
-                case "y":{
+//        boolean flag = true;
+//        while (flag) {
+//            System.out.print("Do you want to run a test (y/n): ");
+//           
+//            switch (scan.nextLine()) {
+//                case "y":{
                     /*
                     // Tests
                     Test test = new Test();
@@ -199,10 +199,10 @@ public class PokerApp {
                     
                     flag = false;
 */
-                    System.out.println("Testing not implemented");
-                    break;
-                    }
-                case "n":{
+//                    System.out.println("Testing not implemented");
+//                    break;
+//                    }
+//                case "n":{
                     // Input
                     
                     System.out.print("\nEnter the number of players: ");
@@ -227,17 +227,21 @@ public class PokerApp {
                     Round round;
                     round = app.new Round(players, dealer);
                     
+                    // Create tester
+                    Test tester = new Test();
+                    
                     // Run rounds
                     int r = 1;
                     while (r <= rounds) {
-                        System.out.print("\nRound " + r + ":\n");
-                        System.out.println("Player" + d + " is dealing");
+//                        System.out.print("\nRound " + r + ":\n");
+//                        System.out.println("Player" + d + " is dealing");
                         round.cards = new Card[5];
                         dealer.dealCards();
                         round.run();
+                        tester.checkForDoubles(players, round.cards);
                         
                         // Change the dealer
-                        if (d >= players.length) {
+                        if (d >= players.length-1) {
                             d = 0;
                         } else {
                             d += 1;
@@ -248,15 +252,15 @@ public class PokerApp {
                         r += 1;
                     }
                     
-                    flag = false;
-                        break;
-                    }
-                case "q":
-                    flag = false;
-                    break;
-            }
-        }
-        
+//                    flag = false;
+//                        break;
+//                    }
+//                case "q":
+//                    flag = false;
+//                    break;
+//            }
+//        }
+        tester.printErrors();
     }
     
 }
