@@ -221,6 +221,7 @@ public class PokerApp {
                     // Create dealer
                     Dealer dealer = new Dealer(players);
                     dealer.shuffleDeck();
+                    int d = 0; // The dealers number, which player is dealing
                     
                     //Create round
                     Round round;
@@ -230,10 +231,19 @@ public class PokerApp {
                     int r = 1;
                     while (r <= rounds) {
                         System.out.print("\nRound " + r + ":\n");
+                        System.out.println("Player" + d + " is dealing");
                         round.cards = new Card[5];
                         dealer.dealCards();
                         round.run();
-                        dealer = new Dealer(players);
+                        
+                        // Change the dealer
+                        if (d >= players.length) {
+                            d = 0;
+                        } else {
+                            d += 1;
+                        }
+                        dealer.setDealer(d);
+                        dealer.shuffleDeck();
                         round = app.new Round(players, dealer);
                         r += 1;
                     }

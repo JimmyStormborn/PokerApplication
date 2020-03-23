@@ -41,11 +41,14 @@ public class Dealer {
      * Deals each player their cards.
      */
     public void dealCards() {
-        int i = 1;
-        int length = players.length;
-        int n;
-        while (i <= length) {
+        int i = 0; // Counts how many players have been dealt to.
+        int length = players.length; // The amount of players.
+        int n; // The player being dealt to.
+        while (i < length) {
             n = dealer + i;
+            // If the player number being dealt to is higher than the
+            // amount of players, minus the amount of player to wrap around.
+            // Else deal to the current player in order.
             if (n >= length) {
                 players[n - length].setCard1(deck[pos]);
             } else {
@@ -55,9 +58,12 @@ public class Dealer {
             i++;
         }
         
-        i = 1;
-        while (i <= length) {
+        i = 0;
+        while (i < length) {
             n = dealer + i;
+            // If the player number being dealt to is higher than the
+            // amount of players, minus the amount of player to wrap around.
+            // Else deal to the current player in order.
             if (n >= length) {
                 players[n - length].setCard2(deck[pos]);
             } else {
@@ -185,5 +191,6 @@ public class Dealer {
             
             n++;
         }
+        this.pos = 0;
     }
 }
