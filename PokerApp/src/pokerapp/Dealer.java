@@ -47,7 +47,7 @@ public class Dealer {
         while (i < length) {
             n = dealer + i;
             // If the player number being dealt to is higher than the
-            // amount of players, minus the amount of player to wrap around.
+            // amount of players, minus the amount of players to wrap around.
             // Else deal to the current player in order.
             if (n >= length) {
                 players[n - length].setCard1(deck[pos]);
@@ -62,7 +62,7 @@ public class Dealer {
         while (i < length) {
             n = dealer + i;
             // If the player number being dealt to is higher than the
-            // amount of players, minus the amount of player to wrap around.
+            // amount of players, minus the amount of players to wrap around.
             // Else deal to the current player in order.
             if (n >= length) {
                 players[n - length].setCard2(deck[pos]);

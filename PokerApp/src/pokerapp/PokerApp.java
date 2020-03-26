@@ -1,7 +1,9 @@
 package pokerapp;
 
+import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @desc 
@@ -14,9 +16,10 @@ public class PokerApp {
     private class Round {
         final private Player[] players;
         final private Dealer dealer;
-        private final int chip = 0;
-        private Card[] cards = new Card[5];
+        private final int chips = 0;
+        private Card[] pot_cards = new Card[5];
         final private Parser parser = new Parser();
+        final private Test tester = new Test(); // Creates a tester
         
         final private int min = 25;
         final private int small = 25;
@@ -37,7 +40,18 @@ public class PokerApp {
             flop();
             turn();
             river();
+            for (Player player : players) {
+                try {
+                    player.getCombinations(this.pot_cards);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(PokerApp.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
 //            findWinner();
+
+            // Testing
+//            tester.checkForDoubles(players, this.cards);
+//            tester.printErrors();
         }
         
         // Deal out the player's cards
@@ -52,12 +66,12 @@ public class PokerApp {
             Card[] flop = dealer.getFlop();
             int i = 0;
             for(Card card : flop) {
-                this.cards[i] = card;
+                this.pot_cards[i] = card;
                 i++;
             }
 //            System.out.println("\nFlop:");
 //            printCards(Arrays.copyOfRange(cards, 0, 3));
-            
+//            
 //            printHands();
         }
         
@@ -65,10 +79,10 @@ public class PokerApp {
         private void turn() {
             dealer.dealTurn();
             Card[] turn = dealer.getTurn();
-            cards[3] = turn[0];
+            pot_cards[3] = turn[0];
 //            System.out.println("\nTurn:");
 //            printCards(Arrays.copyOfRange(cards, 0, 4));
-            
+//            
 //            printHands();
         }
         
@@ -76,10 +90,10 @@ public class PokerApp {
         private void river() {
             dealer.dealRiver();
             Card[] river = dealer.getRiver();
-            cards[4] = river[0];
+            pot_cards[4] = river[0];
 //            System.out.println("\nRiver:");
 //            printCards(cards);
-            
+//            
 //            printHands();
         }
         
@@ -154,113 +168,51 @@ public class PokerApp {
     public static void main(String[] args) {
         PokerApp app = new PokerApp();
         Scanner scan = new Scanner(System.in);
-        
-//        boolean flag = true;
-//        while (flag) {
-//            System.out.print("Do you want to run a test (y/n): ");
-//           
-//            switch (scan.nextLine()) {
-//                case "y":{
-                    /*
-                    // Tests
-                    Test test = new Test();
                     
-                    System.out.print("\nEnter your test type (0 = matches): ");
-                    int test_num = scan.nextInt();
-                    
-                    System.out.print("\nEnter your test number: ");
-                    int t = scan.nextInt();
-                    if (!(test.runTest(test_num, t))) {
-                        System.err.println("No such test");
-                        return;
-                    }
-                    
-                    int num = test.num;
-                    
-                    int chips = 2000;
-                    
-                    Player[] players = new Player[num];
-                    for (int n = 0; n < num; n++) {
-                        players[n] = new Player(n, chips);
-//                        players[n].setCard1(test.cards[n].suit);
-//                        players[n].setCard2(test.cards[n].value);
-                    }       
-                    
-                    // Create dealer
-                    Dealer dealer = new Dealer(players);
-                    dealer.deck = test.pot;
-                    
-                    //Create round
-                    Round round;
-                    round = app.new Round(players, dealer);
-                    
-                    // Run rounds
-                    round.run();
-                    
-                    flag = false;
-*/
-//                    System.out.println("Testing not implemented");
-//                    break;
-//                    }
-//                case "n":{
-                    // Input
-                    
-                    System.out.print("\nEnter the number of players: ");
-                    int num = scan.nextInt();
-                    
-                    System.out.print("\nEnter the number of rounds: ");
-                    int rounds = scan.nextInt();
-                    
-                    int chips = 2000;
-                    
-                    Player[] players = new Player[num];
-                    for (int n = 0; n < num; n++) {
-                        players[n] = new Player(n, chips);
-                    }
-                    
-                    // Create dealer
-                    Dealer dealer = new Dealer(players);
-                    dealer.shuffleDeck();
-                    int d = 0; // The dealers number, which player is dealing
-                    
-                    //Create round
-                    Round round;
-                    round = app.new Round(players, dealer);
-                    
-                    // Create tester
-                    Test tester = new Test();
-                    
-                    // Run rounds
-                    int r = 1;
-                    while (r <= rounds) {
-//                        System.out.print("\nRound " + r + ":\n");
-//                        System.out.println("Player" + d + " is dealing");
-                        round.cards = new Card[5];
-                        dealer.dealCards();
-                        round.run();
-                        tester.checkForDoubles(players, round.cards);
-                        
-                        // Change the dealer
-                        if (d >= players.length-1) {
-                            d = 0;
-                        } else {
-                            d += 1;
-                        }
-                        dealer.setDealer(d);
-                        dealer.shuffleDeck();
-                        round = app.new Round(players, dealer);
-                        r += 1;
-                    }
-                    
-//                    flag = false;
-//                        break;
-//                    }
-//                case "q":
-//                    flag = false;
-//                    break;
-//            }
-//        }
-        tester.printErrors();
+        System.out.print("\nEnter the number of players: ");
+        int num = scan.nextInt();
+
+        System.out.print("\nEnter the number of rounds: ");
+        int rounds = scan.nextInt();
+
+        int chips = 2000;
+
+        Player[] players = new Player[num];
+        for (int n = 0; n < num; n++) {
+            players[n] = new Player(n, chips);
+        }
+
+        // Create dealer
+        Dealer dealer = new Dealer(players);
+        dealer.shuffleDeck();
+        int d = 0; // The dealers number, which player is dealing
+
+        //Create round
+        Round round;
+        round = app.new Round(players, dealer);
+
+        // Run rounds
+        int r = 1;
+        while (r <= rounds) {
+
+//            System.out.print("\nRound " + r + ":\n");
+//            System.out.println("Player" + d + " is dealing");
+
+            round.pot_cards = new Card[5];
+            dealer.dealCards();
+            round.run();
+
+            // Change the dealer
+            if (d >= players.length-1) {
+                d = 0;
+            } else {
+                d += 1;
+            }
+            dealer.setDealer(d);
+            dealer.shuffleDeck();
+            round = app.new Round(players, dealer);
+            r += 1;
+        }
     }
     
 }
