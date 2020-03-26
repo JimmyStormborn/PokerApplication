@@ -120,7 +120,7 @@ public class Player {
      * @param pot The cards in the middle
      */
     public void getCombinations(Card[] pot) {
-//        Parser parser = new Parser();
+        Parser parser = new Parser();
         
         // Get all the cards that the player can use.
         Card[] cards = new Card[7];
@@ -164,18 +164,55 @@ public class Player {
                 }
                 c++;
             }
+            
+            for (int i = 0; i < combinations.length; i++) {
+                combinations[i] = insertSort(combinations[i]);
+            }
+            
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-//        for (Card[] combination : combinations) {
-//            for (Card card : combination) {
-//                if (card != null) {
-//                    System.out.print(parser.cardToString(card) + " ");
-//                }
-//            }
-//            System.out.println();
-//        }
+        for (Card[] combination : combinations) {
+            for (Card card : combination) {
+                if (card != null) {
+                    System.out.print(parser.cardToString(card) + " ");
+                }
+            }
+            System.out.println();
+        }
+    }
+    
+    /**
+     * Sorts the cards in order of highest value to lowest value.
+     * 
+     * @param cards The array of cards being sorted
+     * @return The sorted array of cards
+     */
+    private Card[] insertSort(Card[] cards) {
+        Card[] sorted_cards = cards;
+        
+        int i, j;
+        Card key;
+        for (i = 1; i < sorted_cards.length; i++) {
+            key = sorted_cards[i];
+            j = i-1;
+            while (j >= 0) {
+                if (key != null && sorted_cards[j] != null) {
+                    if (key.value > sorted_cards[j].value) {
+                        sorted_cards[j+1] = sorted_cards[j];
+                        j -= 1;
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+            sorted_cards[j + 1] = key;
+        }
+        
+        return sorted_cards;
     }
     
     /**
