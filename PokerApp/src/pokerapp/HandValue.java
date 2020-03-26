@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package pokerapp;
 
 /**
@@ -11,17 +6,43 @@ package pokerapp;
  * royal-flush=9
  *
  * @author James Bird-Sycamore
+ * @date 27/03/2020
  */
 public class HandValue {
-    int hand_value = 0;
-    Card[] hand = new Card[5];
-    Player player;
+    // Global Variables
+    private int hand_value = 0;
+    private Card[] hand_cards = new Card[5];
     
-    public HandValue() {
-        
+    /**
+     * Constructor: Creates the HandValue object.
+     */
+    public HandValue() {}
+    
+    /**
+     * Retrieves the cards in the player's hand
+     * 
+     * @return The player's hand
+     */
+    public Card[] getHandCards() {
+        return this.hand_cards;
     }
     
-    public void findHandValue() {
+    /**
+     * Retrieves the value of the player's hand
+     * 
+     * @return The player's hand value.
+     */
+    public int getHandValue() {
+        return this.hand_value;
+    }
+    
+    /**
+     * Finds the value of each combination and saves the 
+     * combination with the highest hand value.
+     * 
+     * @param combinations All the possible combinations of cards the player can have.
+     */
+    public void findHandValue(Card[][] combinations) {
         
     }
     

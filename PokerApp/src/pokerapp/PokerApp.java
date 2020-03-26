@@ -1,25 +1,26 @@
 package pokerapp;
 
-import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @desc 
  *
  * @author James Bird-Sycamore
- * @date 22/03/2020
+ * @date 27/03/2020
  */
 public class PokerApp {
     
     private class Round {
-        final private Player[] players;
-        final private Dealer dealer;
+        // GLOBAL
+        // OBJECTS
+        final private Player[] players; // The players in the round
+        final private Dealer dealer; // The dealer in the round
+        final private Parser parser = new Parser(); // Creates a parser
+        final private Test tester = new Test(); // Creates a tester
+        
+        // VARIABLES
         private final int chips = 0;
         private Card[] pot_cards = new Card[5];
-        final private Parser parser = new Parser();
-        final private Test tester = new Test(); // Creates a tester
         
         final private int min = 25;
         final private int small = 25;
@@ -37,16 +38,25 @@ public class PokerApp {
         
         private void run() {
             start();
+            for (Player player : players) {
+                player.getCombinations(this.pot_cards);
+            }
+            
             flop();
+            for (Player player : players) {
+                player.getCombinations(this.pot_cards);
+            }
+            
             turn();
+            for (Player player : players) {
+                player.getCombinations(this.pot_cards);
+            }
+            
             river();
             for (Player player : players) {
-                try {
-                    player.getCombinations(this.pot_cards);
-                } catch (FileNotFoundException ex) {
-                    Logger.getLogger(PokerApp.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                player.getCombinations(this.pot_cards);
             }
+            
 //            findWinner();
 
             // Testing

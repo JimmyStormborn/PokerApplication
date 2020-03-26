@@ -3,13 +3,15 @@ package pokerapp;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Hand values: high-card=0, pair=1, two-pair=2, three-of-a-kind=3,
- * straight=4, flush=5, full-house=6, four-of-a-kind=7, straight-flush=8,
- * royal-flush=9
+ * @desc The Player class. It defines the player, stores their cards and 
+ * chips, and is able to find what the players hand value is.
  *
  * @author James Bird-Sycamore
+ * @date 27/03/2020
  */
 public class Player {
     
@@ -28,43 +30,86 @@ public class Player {
     
     // Variables
     
-    private Card[] player_cards = new Card[2]; // The players cards
-    private Card[][] combinations = new Card[31][5]; // All possible combinations of cards for the player's hand
+    final private Card[] player_cards = new Card[2]; // The players cards
+    public Card[][] combinations = new Card[31][5]; // All possible combinations of cards for the player's hand
     private int chips; // The amount of chips the player has
-    public int playerNum; // The player's number
-    public Card[] hand = new Card[5]; // The best possible combination of cards the player has
+    final public int playerNum; // The player's number
+    public Card[] hand_cards = new Card[5]; // The best possible combination of cards the player has
     public int hand_value; // The value of the player's hand
     
+    /**
+     * Default Constructor: Creates the player object.
+     * 
+     * @param playerNum The number identifying the player.
+     * @param chips The amount of chips the player starts with.
+     */
     public Player(int playerNum, int chips) {
         this.playerNum = playerNum;
         this.chips = chips;
     }
     
+    /**
+     * Constructor: Creates the player object.
+     * Uses 2000 chips for the default number of chips.
+     * 
+     * @param playerNum The number identifying the player.
+     */
     public Player(int playerNum) {
         this(playerNum, 2000);
     }
     
+    /**
+     * Retrieves the players cards.
+     * 
+     * @return Both cards the player has. 
+     */
     public Card[] getCards() {
         return this.player_cards;
     }
     
+    /**
+     * Retrieves one of the players cards.
+     * 
+     * @return The player card at position 0. 
+     */
     public Card getCard1() {
         return this.player_cards[0];
     }
     
+    /**
+     * Retrieves one of the players cards.
+     * 
+     * @return The player card at position 1. 
+     */
     public Card getCard2() {
         return this.player_cards[1];
     }
     
+    /**
+     * Changes the player's cards.
+     * 
+     * @param card1 The new value of the first card.
+     * @param card2 The new value of the second card.
+     */
     public void setCards(Card card1, Card card2) {
         setCard1(card1);
         setCard2(card2);
     }
     
+    /**
+     * Changes one of the player's cards.
+     * 
+     * @param card1 The new value of the first card.
+     */
     public void setCard1(Card card1) {
         this.player_cards[0] = card1;
     }
     
+    /**
+     * Changes one of the player's cards
+     * 
+     * @param card2 The new value of the second card. 
+     */
     public void setCard2(Card card2) {
         this.player_cards[1] = card2;
     }
@@ -73,10 +118,9 @@ public class Player {
      * Finds all the card combinations the player can have.
      * 
      * @param pot The cards in the middle
-     * @throws FileNotFoundException 
      */
-    public void getCombinations(Card[] pot) throws FileNotFoundException {
-        Parser parser = new Parser();
+    public void getCombinations(Card[] pot) {
+//        Parser parser = new Parser();
         
         // Get all the cards that the player can use.
         Card[] cards = new Card[7];
@@ -94,25 +138,34 @@ public class Player {
         cards[n] = player_cards[1];
         
         File file = new File("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\all_possible_combinations.txt");
-        Scanner scan = new Scanner(file);
-        int[] order;
-        
-        int c = 0;
-        while (scan.hasNextLine()) {
-            order = new int[5];
-            String[] str_order = scan.nextLine().split(", ");
-            for (int i = 0; i < str_order.length; i++) {
-                order[i] = Integer.parseInt(str_order[i]);
-            }
-            n = 0;
-            for (int o : order) {
-                if (cards[o-1] != null) {
-                    this.combinations[c][n] = cards[o-1];
-                    n++;
+        Scanner scan;
+        try {
+            scan = new Scanner(file);
+            
+            int[] order; // The order of cards in integer format
+            int c = 0; // The position of combinations
+            // Reads each possible or of combinations and adds the combo of cards
+            // to the array of combinations.
+            while (scan.hasNextLine()) {
+                order = new int[5]; // Can only be 5 long
+                String[] str_order = scan.nextLine().split(", ");
+                // Converts the string into integers
+                for (int i = 0; i < str_order.length; i++) {
+                    order[i] = Integer.parseInt(str_order[i]);
                 }
+                
+                // Creates all combinations of cards in card format.
+                n = 0; // The position in the cards, 0 - 4.
+                for (int o : order) {
+                    if (cards[o-1] != null) {
+                        this.combinations[c][n] = cards[o-1]; // Minus 1 from order because array starts from 0 not 1.
+                        n++;
+                    }
+                }
+                c++;
             }
-            n = 0;
-            c++;
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
         }
         
 //        for (Card[] combination : combinations) {
@@ -123,5 +176,15 @@ public class Player {
 //            }
 //            System.out.println();
 //        }
+    }
+    
+    /**
+     * Finds the value of the player's hand and the corresponding cards.
+     */
+    public void findHandValue() {
+        HandValue hand_finder = new HandValue();
+        hand_finder.findHandValue(combinations);
+        hand_value = hand_finder.getHandValue();
+        hand_cards = hand_finder.getHandCards();
     }
 }
