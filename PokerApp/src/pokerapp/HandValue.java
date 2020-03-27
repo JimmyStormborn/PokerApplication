@@ -1,5 +1,7 @@
 package pokerapp;
 
+import java.util.ArrayList;
+
 /**
  * Hand values: high-card=0, pair=1, two-pair=2, three-of-a-kind=3,
  * straight=4, flush=5, full-house=6, four-of-a-kind=7, straight-flush=8,
@@ -9,6 +11,20 @@ package pokerapp;
  * @date 27/03/2020
  */
 public class HandValue {
+    
+    // Placeholders
+    
+    int high = 0;
+    int pair = 1;
+    int two_pair = 2;
+    int three_of_a_kind = 3;
+    int straight = 4;
+    int flush = 5;
+    int full_house = 6;
+    int four_of_a_kind = 7;
+    int straight_flush = 8;
+    int royal_flush = 9;
+    
     // Global Variables
     private int hand_value = 0;
     private Card[] hand_cards = new Card[5];
@@ -42,8 +58,42 @@ public class HandValue {
      * 
      * @param combinations All the possible combinations of cards the player can have.
      */
-    public void findHandValue(Card[][] combinations) {
+    public void findHandValue(ArrayList<Card[]> combinations) {
+        int hand_value = 0;
+        Card[] hand_cards = new Card[5];
         
+        
+    }
+    
+    private int checkMatches(Card[] combination) {
+        int hand_value = 0;
+        int match_value = 0;
+        
+        int matches;
+        for (int i = 0; i < combination.length; i++) {
+            matches = 0;
+            for (int j = i+1; j < combination.length; j++) {
+                if (combination[i].value == combination[j].value) {
+                    if (matches == 0) {
+                        matches = 2;
+                    } else {
+                        matches +=1 ;
+                    }
+                }
+            }
+            if (matches > 0) {
+                if (matches == 2) {
+                    if (hand_value <= pair) {
+                        if (match_value < combination[i].value) {
+                            hand_value = pair;
+                            match_value = combination[i].value;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return hand_value;
     }
     
      /*

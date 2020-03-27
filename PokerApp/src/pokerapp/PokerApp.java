@@ -38,21 +38,13 @@ public class PokerApp {
         
         private void run() {
             start();
-            for (Player player : players) {
-                player.getCombinations(this.pot_cards);
-            }
             
             flop();
-            for (Player player : players) {
-                player.getCombinations(this.pot_cards);
-            }
             
             turn();
-            for (Player player : players) {
-                player.getCombinations(this.pot_cards);
-            }
             
             river();
+            
             for (Player player : players) {
                 player.getCombinations(this.pot_cards);
             }

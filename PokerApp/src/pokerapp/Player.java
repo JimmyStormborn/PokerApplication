@@ -1,6 +1,7 @@
 package pokerapp;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
@@ -31,7 +32,7 @@ public class Player {
     // Variables
     
     final private Card[] player_cards = new Card[2]; // The players cards
-    public Card[][] combinations = new Card[31][5]; // All possible combinations of cards for the player's hand
+    public ArrayList<Card[]> combinations = new ArrayList<>(); // All possible combinations of cards for the player's hand
     private int chips; // The amount of chips the player has
     final public int playerNum; // The player's number
     public Card[] hand_cards = new Card[5]; // The best possible combination of cards the player has
@@ -156,17 +157,18 @@ public class Player {
                 
                 // Creates all combinations of cards in card format.
                 n = 0; // The position in the cards, 0 - 4.
+                Card[] combination = new Card[5];
                 for (int o : order) {
                     if (cards[o-1] != null) {
-                        this.combinations[c][n] = cards[o-1]; // Minus 1 from order because array starts from 0 not 1.
+                        combination[n] = cards[o-1]; // Minus 1 from order because array starts from 0 not 1.
                         n++;
                     }
                 }
+                combination = insertSort(combination);
+                if (!combinations.contains(combination)) {
+                    combinations.add(combination);
+                }
                 c++;
-            }
-            
-            for (int i = 0; i < combinations.length; i++) {
-                combinations[i] = insertSort(combinations[i]);
             }
             
         } catch (FileNotFoundException ex) {
