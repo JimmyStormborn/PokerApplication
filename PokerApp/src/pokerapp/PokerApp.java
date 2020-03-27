@@ -3,17 +3,25 @@ package pokerapp;
 import java.util.*;
 
 /**
+ * @desc 
  *
- * @author TheBeast
+ * @author James Bird-Sycamore
+ * @date 28/03/2020
  */
 public class PokerApp {
     
     private class Round {
-        final private Player[] players;
-        final private Dealer dealer;
-        private final int chip = 0;
-        private int[][] cards = new int[5][2];
-        final private Parser parser = new Parser();
+        // GLOBAL
+        // OBJECTS
+        private Player[] players; // The players in the round
+        private Dealer dealer; // The dealer in the round
+        private Parser parser = new Parser(); // Creates a parser
+        private Test tester = new Test(); // Creates a tester
+        
+        // VARIABLES
+        private int round = 0;
+        private final int chips = 0;
+        private Card[] pot_cards = new Card[5];
         
         final private int min = 25;
         final private int small = 25;
@@ -31,102 +39,132 @@ public class PokerApp {
         
         private void run() {
             start();
+            
             flop();
+            
             turn();
+            
             river();
+            
+            for (Player player : players) {
+                player.getCombinations(this.pot_cards);
+            }
+            
             findWinner();
+            
+            System.out.println("\n");
+
+            // Change the dealer
+            int d = dealer.dealer;
+            if (d >= players.length-1) {
+                dealer.setDealer(0);
+            } else {
+                dealer.setDealer(d + 1);
+            }
+
+            // Testing
+//            tester.checkForDoubles(players, this.cards);
+//            tester.printErrors();
         }
         
         // Deal out the player's cards
         private void start() {
-//            dealer.dealCards();
-            printHands();
+            round += 1;
+            
+            dealer.shuffleDeck();
+
+            System.out.print("\nRound " + round + ":\n");
+            System.out.println("Player" + dealer.dealer + " is dealing");
+
+            pot_cards = new Card[5];
+            for (Player player : players) {
+                player.setCards(null, null);
+            }
+            dealer.dealCards();
+//            printHands();
         }
         
         
         // Deal the flop
         private void flop() {
             dealer.dealFlop();
-            int[][] flop = dealer.getFlop();
+            Card[] flop = dealer.getFlop();
             int i = 0;
-            for(int[] card : flop) {
-                this.cards[i] = card;
+            for(Card card : flop) {
+                this.pot_cards[i] = card;
                 i++;
             }
-            System.out.println("\nFlop:");
-            printCards(Arrays.copyOfRange(cards, 0, 3));
-            
-            printHands();
+//            System.out.println("\nFlop:");
+//            printCards(Arrays.copyOfRange(cards, 0, 3));
+//            
+//            printHands();
         }
         
         // Deal the turn
         private void turn() {
             dealer.dealTurn();
-            int[][] turn = dealer.getTurn();
-            cards[3] = turn[0];
-            System.out.println("\nTurn:");
-            printCards(Arrays.copyOfRange(cards, 0, 4));
-            
-            printHands();
+            Card[] turn = dealer.getTurn();
+            pot_cards[3] = turn[0];
+//            System.out.println("\nTurn:");
+//            printCards(Arrays.copyOfRange(cards, 0, 4));
+//            
+//            printHands();
         }
         
         // Deal the river
         private void river() {
             dealer.dealRiver();
-            int[][] river = dealer.getRiver();
-            cards[4] = river[0];
-            System.out.println("\nRiver:");
-            printCards(cards);
-            
-            printHands();
+            Card[] river = dealer.getRiver();
+            pot_cards[4] = river[0];
+//            System.out.println("\nRiver:");
+//            printCards(cards);
+//            
+//            printHands();
         }
         
         private void findWinner() {
             int winner = -1;
-            ArrayList<Integer> draw = new ArrayList<>();
-            int[] winning_hand = new int[6];
+            int[] draw = new int[players.length];
+            boolean draw_flag = false;
+            int[] winning_hand = new int[7];
+            int[] players_hand;
             for (Player player : players) {
-                if (player.hand_value[0] > winning_hand[0]) {
+                
+                player.findHandValue();
+                players_hand = player.hand_value;
+                
+                if (Arrays.equals(winning_hand, players_hand)) {
+                    draw[0] = winner;
+                    winner = -1;
+                    draw[1] = player.playerNum;
+                    draw_flag = true;
+                } else if (players_hand[0] > winning_hand[0] || 
+                    ((players_hand[1] > winning_hand[1] || players_hand[2] > winning_hand[2]
+                    || players_hand[3] > winning_hand[3] || players_hand[4] > winning_hand[4]
+                    || players_hand[5] > winning_hand[5] || players_hand[6] > winning_hand[6]) && players_hand[0] == winning_hand[0])) {
                     winner = player.playerNum;
-                    winning_hand = player.hand_value;
-                } else if (player.hand_value[0] == winning_hand[0]) {
-                    if (player.hand_value[1] > winning_hand[1]) {
-                        winner = player.playerNum;
-                        winning_hand = player.hand_value;
-                    } else if (player.hand_value[1] == winning_hand[1]) {
-                        if (player.hand_value[2] > winning_hand[2]) {
-                            winner = player.hand_value[2];
-                        } else if (player.hand_value[2] == winning_hand[2]) {
-                            if (!draw.contains(winner) && winner >= 0) {
-                                draw.add(winner);
-                            }
-                            if (!draw.contains(player.playerNum)) {
-                                draw.add(player.playerNum);
-                            }
-                            winner = -1;
-                        }
-                    }
+                    winning_hand = players_hand;
+                    draw = new int[players.length];
+                    draw_flag = false;
                 }
+                
+                System.out.println("Player"+player.playerNum+"'s hand is "+
+                        parser.cardsToString(player.hand_cards)+"with value "+
+                        parser.handToString(player.hand_value));
             }
-            if (winner < 0) {
-                if (!draw.isEmpty()) {
-                    System.out.print("\nDraw between ");
-                    boolean flag = false;
-                    for (int d : draw) {
-                        if (flag) {
-                            System.out.print("and ");
-                        }
-                        System.out.print("player " + d + " ");
-                        flag = true;
-                    }
-                    System.out.println(".");
+            
+            if (draw_flag) {
+                System.out.print("Draw between ");
+                for (int d : draw) {
+                    System.out.print("Player"+d+" ");
                 }
+                System.out.println();
             } else {
-                System.out.println("\nWinner is " + winner + ", hand = " + parser.handToString(winning_hand));
+                System.out.println("Winner is Player"+winner+"!");
             }
         }
         
-        private void printCards(int[][] cards) {
+        private void printCards(Card[] cards) {
             System.out.println(parser.cardsToString(cards));
         }
         
@@ -134,8 +172,8 @@ public class PokerApp {
             for (Player player : players) {
                 System.out.print("\nPlayer" + player.playerNum + " cards: ");
                 printCards(player.getCards());
-                player.getHand(cards);
-                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand_value));
+//                player.getHand(cards);
+//                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand_value));
             }
         }
     }
@@ -150,95 +188,35 @@ public class PokerApp {
     public static void main(String[] args) {
         PokerApp app = new PokerApp();
         Scanner scan = new Scanner(System.in);
-        
-        boolean flag = true;
-        while (flag) {
-            System.out.print("Do you want to run a test (y/n): ");
-           
-            switch (scan.nextLine()) {
-                case "y":{
-                    // Tests
-                    Test test = new Test();
                     
-                    System.out.print("\nEnter your test type (0 = matches): ");
-                    int test_num = scan.nextInt();
-                    
-                    System.out.print("\nEnter your test number: ");
-                    int t = scan.nextInt();
-                    if (!(test.runTest(test_num, t))) {
-                        System.err.println("No such test");
-                        return;
-                    }
-                    
-                    int num = test.num;
-                    
-                    int chips = 2000;
-                    
-                    Player[] players = new Player[num];
-                    for (int n = 0; n < num; n++) {
-                        players[n] = new Player(n, chips);
-                        players[n].setCard1(test.cards[n][0]);
-                        players[n].setCard2(test.cards[n][1]);
-                    }       
-                    
-                    // Create dealer
-                    Dealer dealer = new Dealer(players);
-                    dealer.deck = test.pot;
-                    
-                    //Create round
-                    Round round;
-                    round = app.new Round(players, dealer);
-                    
-                    // Run rounds
-                    round.run();
-                    
-                    flag = false;
-                        break;
-                    }
-                case "n":{
-                    // Input
-                    
-                    System.out.print("\nEnter the number of players: ");
-                    int num = scan.nextInt();
-                    
-                    System.out.print("\nEnter the number of rounds: ");
-                    int rounds = scan.nextInt();
-                    
-                    int chips = 2000;
-                    
-                    Player[] players = new Player[num];
-                    for (int n = 0; n < num; n++) {
-                        players[n] = new Player(n, chips);
-                    }
-                    
-                    // Create dealer
-                    Dealer dealer = new Dealer(players);
-                    
-                    //Create round
-                    Round round;
-                    round = app.new Round(players, dealer);
-                    
-                    // Run rounds
-                    int r = 1;
-                    while (r <= rounds) {
-                        System.out.print("\nRound " + r + ":\n");
-                        round.cards = new int[5][2];
-                        dealer.dealCards();
-                        round.run();
-                        dealer = new Dealer(players);
-                        round = app.new Round(players, dealer);
-                        r += 1;
-                    }
-                    
-                    flag = false;
-                        break;
-                    }
-                case "q":
-                    flag = false;
-                    break;
-            }
+        System.out.print("\nEnter the number of players: ");
+        int num = scan.nextInt();
+
+        System.out.print("\nEnter the number of rounds: ");
+        int rounds = scan.nextInt();
+
+        int chips = 2000;
+
+        Player[] players = new Player[num];
+        for (int n = 0; n < num; n++) {
+            players[n] = new Player(n, chips);
         }
-        
+
+        // Create dealer
+        Dealer dealer = new Dealer(players);
+        dealer.shuffleDeck();
+        int d = 0; // The dealers number, which player is dealing
+
+        //Create round
+        Round round;
+        round = app.new Round(players, dealer);
+
+        // Run rounds
+        int r = 1;
+        while (r <= rounds) {
+            round.run();
+            r += 1;
+        }
     }
     
 }
