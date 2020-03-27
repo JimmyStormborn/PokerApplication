@@ -9,100 +9,86 @@ package pokerapp;
  * royal-flush=9
  *
  * @author James Bird-Sycamore
- * @date 22/03/2020
+ * @date 28/03/2020
  */
 public class Parser {
     
-    public Parser() {
-        
-    }
+    /**
+     * Constructor: Creates the parser object.
+     */
+    public Parser() {}
     
+    /**
+     * Converts an array of Card objects into a readable string.
+     * 
+     * @param cards The cards being converted in string.
+     * @return The String of cards in a readable format.
+     */
     public String cardsToString(Card[] cards) {
         String string_cards = "";
         for(Card card : cards) {
-            // Value
-            switch (card.value) {
-                case 11:
-                    string_cards += "J";
-                    break;
-                case 12:
-                    string_cards += "Q";
-                    break;
-                case 13:
-                    string_cards += "K";
-                    break;
-                case 14:
-                    string_cards += "A";
-                    break;
-                default:
-                    string_cards += Integer.toString(card.value);
-                    break;
+            if (card != null) {
+                // Value
+                switch (card.value) {
+                    case 11:
+                        string_cards += "J";
+                        break;
+                    case 12:
+                        string_cards += "Q";
+                        break;
+                    case 13:
+                        string_cards += "K";
+                        break;
+                    case 14:
+                        string_cards += "A";
+                        break;
+                    default:
+                        string_cards += Integer.toString(card.value);
+                        break;
+                }
+
+                // Suit
+                switch (card.suit) {
+                    case 0:
+                        string_cards += "S";
+                        break;
+                    case 1:
+                        string_cards += "C";
+                        break;
+                    case 2:
+                        string_cards += "D";
+                        break;
+                    case 3:
+                        string_cards += "H";
+                        break;
+                }
+
+                string_cards += " ";
             }
-            
-            // Suit
-            switch (card.suit) {
-                case 0:
-                    string_cards += "S";
-                    break;
-                case 1:
-                    string_cards += "C";
-                    break;
-                case 2:
-                    string_cards += "D";
-                    break;
-                case 3:
-                    string_cards += "H";
-                    break;
-            }
-            
-            string_cards += " ";
         }
         return string_cards;
     }
     
+    /**
+     * Converts a card into a readable String format.
+     * Converts Card object into array and sends to cardsToString function.
+     * 
+     * @param card The card that is being converted.
+     * @return The String of the card in a readable format.
+     */
     public String cardToString(Card card) {
-        String string_cards = "";
+        Card[] card_array = new Card[1];
+        card_array[0] = card;
         
-        // Value
-        switch (card.value) {
-            case 11:
-                string_cards += "J";
-                break;
-            case 12:
-                string_cards += "Q";
-                break;
-            case 13:
-                string_cards += "K";
-                break;
-            case 14:
-                string_cards += "A";
-                break;
-            default:
-                string_cards += Integer.toString(card.value);
-                break;
-        }
-
-        // Suit
-        switch (card.suit) {
-            case 0:
-                string_cards += "S";
-                break;
-            case 1:
-                string_cards += "C";
-                break;
-            case 2:
-                string_cards += "D";
-                break;
-            case 3:
-                string_cards += "H";
-                break;
-        }
-
-        string_cards += " ";
-            
-        return string_cards;
+        return cardsToString(card_array);
     }
     
+    /**
+     * Converts the hand value into a readable String format.
+     * 
+     * @param hand The hand that is being converted.
+     * @return The String of the converted hand in a readable format. 
+     */
     public String handToString(int[] hand) {
         String str_hand = "";
         
