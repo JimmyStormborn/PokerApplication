@@ -11,13 +11,13 @@ public class Dealer {
     private Player[] players;                   // The players in the round
     public Card[] deck = makeDeck();            // The deck of playing cards
     private int pos = 0;                        // The position in the deck
-    final private Card[] flop = new Card[3];    // The cards in the flop
-    final private Card[] turn = new Card[1];    // The cards in the turn
-    final private Card[] river = new Card[1];   // The cards in the river
+    private Card[] flop = new Card[3];    // The cards in the flop
+    private Card[] turn = new Card[1];    // The cards in the turn
+    private Card[] river = new Card[1];   // The cards in the river
     private boolean flopped = false;            // Flag indicating the flop has been dealt
     private boolean turned = false;             // Flag indicating the turn has been dealt
     private boolean rivered = false;            // Flag indicating the river has been dealt
-    private int dealer = 0;                     // The number of who is dealing
+    public int dealer = 0;                     // The number of who is dealing
     
     /**
      * Constructor: creates the dealer object.
@@ -35,6 +35,12 @@ public class Dealer {
      */
     public void setDealer(int dealer) {
         this.dealer = dealer;
+        this.flop = new Card[3];
+        this.turn = new Card[1];
+        this.river = new Card[1];
+        flopped = false;
+        turned = false;
+        rivered = false;
     }
     
     /**
@@ -177,10 +183,11 @@ public class Dealer {
      */
     public void shuffleDeck() {
         Random rand = new Random();
+        
         int card1;
         int card2;
         int n = 0;
-        int N = 100;
+        int N = 270;
         while (n < N) {
             card1 = rand.nextInt(52);
             card2 = rand.nextInt(52);

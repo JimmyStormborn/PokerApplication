@@ -31,12 +31,12 @@ public class Player {
     
     // Variables
     
-    final private Card[] player_cards = new Card[2]; // The players cards
+    private Card[] player_cards = new Card[2]; // The players cards
     public ArrayList<Card[]> combinations = new ArrayList<>(); // All possible combinations of cards for the player's hand
     private int chips; // The amount of chips the player has
     final public int playerNum; // The player's number
     public Card[] hand_cards = new Card[5]; // The best possible combination of cards the player has
-    public int hand_value; // The value of the player's hand
+    public int[] hand_value = new int[6]; // The value of the player's hand
     
     /**
      * Default Constructor: Creates the player object.
@@ -121,7 +121,8 @@ public class Player {
      * @param pot The cards in the middle
      */
     public void getCombinations(Card[] pot) {
-        Parser parser = new Parser();
+        this.combinations = new ArrayList<>();
+//        Parser parser = new Parser(); 
         
         // Get all the cards that the player can use.
         Card[] cards = new Card[7];
@@ -175,14 +176,14 @@ public class Player {
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        for (Card[] combination : combinations) {
-            for (Card card : combination) {
-                if (card != null) {
-                    System.out.print(parser.cardToString(card) + " ");
-                }
-            }
-            System.out.println();
-        }
+//        for (Card[] combination : combinations) {
+//            for (Card card : combination) {
+//                if (card != null) {
+//                    System.out.print(parser.cardToString(card) + " ");
+//                }
+//            }
+//            System.out.println();
+//        }
     }
     
     /**

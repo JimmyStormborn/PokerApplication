@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * royal-flush=9
  *
  * @author James Bird-Sycamore
- * @date 27/03/2020
+ * @date 28/03/2020
  */
 public class HandValue {
     
@@ -26,7 +26,7 @@ public class HandValue {
     int royal_flush = 9;
     
     // Global Variables
-    private int hand_value = 0;
+    private int[] hand_value = new int[7];
     private Card[] hand_cards = new Card[5];
     
     /**
@@ -48,7 +48,7 @@ public class HandValue {
      * 
      * @return The player's hand value.
      */
-    public int getHandValue() {
+    public int[] getHandValue() {
         return this.hand_value;
     }
     
@@ -59,20 +59,46 @@ public class HandValue {
      * @param combinations All the possible combinations of cards the player can have.
      */
     public void findHandValue(ArrayList<Card[]> combinations) {
-        int hand_value = 0;
-        Card[] hand_cards = new Card[5];
+        int[] combo_value;
         
-        
+        for (Card[] combination : combinations) {
+            combo_value = checkMatches(combination);
+            if (combo_value[0] > hand_value[0] || 
+                    ((combo_value[1] > hand_value[1] || combo_value[2] > hand_value[2]
+                    || combo_value[3] > hand_value[3] || combo_value[4] > hand_value[4]
+                    || combo_value[5] > hand_value[5] || combo_value[6] > hand_value[6]) 
+                    && combo_value[0] == hand_value[0])) {
+                hand_value = combo_value;
+                hand_cards = combination;
+            }
+        }
     }
     
-    private int checkMatches(Card[] combination) {
-        int hand_value = 0;
-        int match_value = 0;
+    /**
+     * Checks the combination of cards for a pair, two pair, three of a kind,
+     * full house, and a four of a kind. It first checks how many matches the
+     * combination has and then calculates the hand value.
+     * 
+     * @param combination The combination of cards being checked.
+     * @return The hand value of the combination of cards.
+     */
+    private int[] checkMatches(Card[] combination) {
+        int[] hand_value = new int[7];
+        int[] kicker;
         
         int matches;
+        int n, j;
+        OUTER:
         for (int i = 0; i < combination.length; i++) {
             matches = 0;
-            for (int j = i+1; j < combination.length; j++) {
+            n = 0;
+            j = 1 + i;
+            while (n < 4) {
+                // If true, wrap around to the start.
+                if (j >= combination.length) {
+                    j -= combination.length;
+                }
+                // If true, we have a match.
                 if (combination[i].value == combination[j].value) {
                     if (matches == 0) {
                         matches = 2;
@@ -80,20 +106,94 @@ public class HandValue {
                         matches +=1 ;
                     }
                 }
+                
+                j++;
+                n++;
             }
-            if (matches > 0) {
-                if (matches == 2) {
-                    if (hand_value <= pair) {
-                        if (match_value < combination[i].value) {
-                            hand_value = pair;
-                            match_value = combination[i].value;
-                        }
+            switch (matches) {
+                case 4:
+                    hand_value[0] = four_of_a_kind;
+                    hand_value[1] = combination[i].value;
+                    kicker = findKicker(combination, combination[i].value, 0, 1);
+                    hand_value[3] = kicker[0];
+                    break OUTER;
+                case 3:
+                    if (hand_value[0] == pair) {
+                        hand_value[0] = full_house;
+                        hand_value[2] = hand_value[1];
+                        hand_value[1] = combination[i].value;
+                        break OUTER;
+                    } else {
+                        hand_value[0] = three_of_a_kind;
+                        hand_value[1] = combination[i].value;
+                        kicker = findKicker(combination, combination[i].value, 0, 2);
+                        hand_value[3] = kicker[0];
+                        hand_value[4] = kicker[1];
                     }
-                }
+                    break;
+                case 2:
+                    if (hand_value[0] == three_of_a_kind) {
+                        hand_value[0] = full_house;
+                        hand_value[2] = combination[i].value;
+                        break OUTER;
+                    } else if (hand_value[0] == pair) {
+                        if (hand_value[1] != combination[i].value) {
+                            hand_value[0] = two_pair;
+                            if (combination[i].value > hand_value[1]) {
+                                hand_value[2] = hand_value[1];
+                                hand_value[1] = combination[i].value;
+                            } else {
+                                hand_value[2] = combination[i].value;
+                            }   kicker = findKicker(combination, hand_value[1], hand_value[2], 1);
+                            hand_value[3] = kicker[0];
+                            break OUTER;
+                        }
+                    } else {
+                        hand_value[0] = pair;
+                        hand_value[1] = combination[i].value;
+                        kicker = findKicker(combination, combination[i].value, 0, 3);
+                        hand_value[3] = kicker[0];
+                        hand_value[4] = kicker[1];
+                        hand_value[5] = kicker[2];
+                    }
+                    break;
+                default:
+                    if (hand_value[0] == 0 && hand_value[1] < combination[i].value) {
+                        hand_value[1] = combination[i].value;
+                        kicker = findKicker(combination, combination[i].value, 0, 4);
+                        hand_value[3] = kicker[0];
+                        hand_value[4] = kicker[1];
+                        hand_value[5] = kicker[2];
+                        hand_value[6] = kicker[3];
+                    }   break;
             }
         }
         
         return hand_value;
+    }
+    
+    /**
+     * Finds all the kickers in the players hand.
+     * 
+     * @param combination The cards being checked for kickers
+     * @param match_value1 The value of the card that has matches, so not a kicker.
+     * @param match_value2 Same as match_value1, but only used for a two pair.
+     * @param num The number of kickers it needs to find.
+     * @return Returns the value of the kickers.
+     */
+    private int[] findKicker(Card[] combination, int match_value1, int match_value2, int num) {
+        int[] kicker = new int[4];
+        int n = 0;
+        while (n < num) {
+            for (int i = 0; i < combination.length; i++) {
+                if (combination[i].value != match_value1 && combination[i].value != match_value2) {
+                    kicker[n] = combination[i].value;
+                    n++;
+                }
+            }
+            break;
+        }
+        return kicker;
     }
     
      /*
