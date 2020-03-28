@@ -3,13 +3,17 @@ package pokerapp;
 import java.util.*;
 
 /**
- * @desc 
+ * The main application which runs the poker application.
  *
  * @author James Bird-Sycamore
- * @date 28/03/2020
+ * Last Updated 29/03/2020
  */
 public class PokerApp {
     
+    /**
+     * The round class runs every round of the poker game
+     * and keeps track of each player.
+     */
     private class Round {
         // GLOBAL
         // OBJECTS
@@ -19,40 +23,40 @@ public class PokerApp {
         private Test tester = new Test(); // Creates a tester
         
         // VARIABLES
-        private int round = 0;
-        private final int chips = 0;
-        private Card[] pot_cards = new Card[5];
+        private int round = 0; // The current round
+        private final int chips = 0; // The chips each player starts with
+        private Card[] pot_cards = new Card[5]; // The cards in the middle
         
-        final private int min = 25;
-        final private int small = 25;
-        final private int big = 50;
+        final private int min = 25; // The minimum bet
+        final private int small = 25; // The small bet
+        final private int big = 50; // The big bet
         
-        private Round(Player[] players) {
-            this.players = players;
-            dealer = new Dealer(players);
-        }
-        
+        /**
+         * Default Constructor: Creates the round object.
+         * 
+         * @param players The players in the round.
+         * @param dealer The dealer object.
+         */
         private Round(Player[] players, Dealer dealer) {
             this.players = players;
             this.dealer = dealer;
         }
         
+        /**
+         * Runs the round.
+         */
         private void run() {
             start();
-            
             flop();
-            
             turn();
-            
             river();
-            
+            // Finds the players combos and then which of the players have won.
             for (Player player : players) {
                 player.getCombinations(this.pot_cards);
             }
-            
             findWinner();
             
-            System.out.println("\n");
+            System.out.println("\n"); // Add some whitespace.
 
             // Change the dealer
             int d = dealer.dealer;
@@ -67,15 +71,17 @@ public class PokerApp {
 //            tester.printErrors();
         }
         
-        // Deal out the player's cards
+        /**
+         * Starts off the round.
+         */
         private void start() {
             round += 1;
             
             dealer.shuffleDeck();
 
             System.out.print("\nRound " + round + ":\n");
-            System.out.println("Player" + dealer.dealer + " is dealing");
 
+            // Resets all the cards from previous rounds.
             pot_cards = new Card[5];
             for (Player player : players) {
                 player.setCards(null, null);
@@ -122,30 +128,57 @@ public class PokerApp {
 //            printHands();
         }
         
+        /**
+         * Finds out who wins the round or if there is a draw.
+         * 
+         * Only used if there are player who have not folded left
+         * in the round.
+         */
         private void findWinner() {
             int winner = -1;
-            int[] draw = new int[players.length];
-            boolean draw_flag = false;
-            int[] winning_hand = new int[7];
-            int[] players_hand;
+            int[] draw = new int[players.length]; // Stores players that have drawn.
+            boolean draw_flag = false; // True if there is a draw.
+            int[] winning_hand = new int[7]; // The current winning hand.
+            int[] players_hand; // The current player's hand.
             for (Player player : players) {
-                
-                player.findHandValue();
-                players_hand = player.hand_value;
-                
-                if (Arrays.equals(winning_hand, players_hand)) {
-                    draw[0] = winner;
-                    winner = -1;
-                    draw[1] = player.playerNum;
-                    draw_flag = true;
-                } else if (players_hand[0] > winning_hand[0] || 
-                    ((players_hand[1] > winning_hand[1] || players_hand[2] > winning_hand[2]
-                    || players_hand[3] > winning_hand[3] || players_hand[4] > winning_hand[4]
-                    || players_hand[5] > winning_hand[5] || players_hand[6] > winning_hand[6]) && players_hand[0] == winning_hand[0])) {
-                    winner = player.playerNum;
-                    winning_hand = players_hand;
-                    draw = new int[players.length];
-                    draw_flag = false;
+                // If the player has folded, don't include them.
+                if (!player.fold) {
+                    player.findHandValue();
+                    players_hand = player.hand_value;
+                    // Check if there is a draw.
+                    if (Arrays.equals(winning_hand, players_hand)) {
+                        if (draw[0] == 0) {
+                            draw[0] = winner;
+                            winner = -1;
+                            draw[1] = player.playerNum;
+                            draw_flag = true;
+                        } else {
+                            int n = 2;
+                            while (n < draw.length) {
+                                if (draw[n] == 0) {
+                                    draw[n] = player.playerNum;
+                                    break;
+                                }
+                                n++;
+                            }
+                        }
+                    } else {
+                        for (int val = 0; val < players_hand.length; val++) {
+                            // If the player has a better hand value then 
+                            // the winner, they are the winner. If they
+                            // have the same value, move to the next value.
+                            // Otherwise stop checking.
+                            if (players_hand[val] > winning_hand[val]) {
+                                winner = player.playerNum;
+                                winning_hand = players_hand;
+                                draw = new int[players.length];
+                                draw_flag = false;
+                                break;
+                            } else if (players_hand[val] != winning_hand[val]) {
+                                break;
+                            }
+                        }
+                    }
                 }
                 
                 System.out.println("Player"+player.playerNum+"'s hand is "+
@@ -156,28 +189,20 @@ public class PokerApp {
             if (draw_flag) {
                 System.out.print("Draw between ");
                 for (int d : draw) {
-                    System.out.print("Player"+d+" ");
+                    if (d != 0) {
+                        System.out.print("Player"+d+" ");
+                    }
                 }
-                System.out.println();
+                System.out.println(".");
             } else {
                 System.out.println("Winner is Player"+winner+"!");
             }
         }
-        
-        private void printCards(Card[] cards) {
-            System.out.println(parser.cardsToString(cards));
-        }
-        
-        private void printHands() {
-            for (Player player : players) {
-                System.out.print("\nPlayer" + player.playerNum + " cards: ");
-                printCards(player.getCards());
-//                player.getHand(cards);
-//                System.out.println("Player" + player.playerNum + " hand: " + parser.handToString(player.hand_value));
-            }
-        }
     }
     
+    /**
+     * Constructor: Creates the poker application object.
+     */
     public PokerApp() {}
 
     /**
@@ -195,17 +220,17 @@ public class PokerApp {
         System.out.print("\nEnter the number of rounds: ");
         int rounds = scan.nextInt();
 
-        int chips = 2000;
-
+        int chips = 2000; // Starting amount of chips.
+        // Create the players.
         Player[] players = new Player[num];
         for (int n = 0; n < num; n++) {
-            players[n] = new Player(n, chips);
+            players[n] = new Player(n+1, chips);
         }
 
         // Create dealer
         Dealer dealer = new Dealer(players);
         dealer.shuffleDeck();
-        int d = 0; // The dealers number, which player is dealing
+        int d = 1; // The dealers number, which player is dealing
 
         //Create round
         Round round;
