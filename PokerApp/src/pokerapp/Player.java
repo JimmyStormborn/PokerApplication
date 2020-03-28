@@ -37,6 +37,7 @@ public class Player {
     final public int playerNum; // The player's number
     public Card[] hand_cards = new Card[5]; // The best possible combination of cards the player has
     public int[] hand_value = new int[6]; // The value of the player's hand
+    public boolean fold = false; // Whether the player has folded or not.
     
     /**
      * Default Constructor: Creates the player object.
