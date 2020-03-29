@@ -243,5 +243,4 @@ public class PokerApp {
             r += 1;
         }
     }
-    
 }

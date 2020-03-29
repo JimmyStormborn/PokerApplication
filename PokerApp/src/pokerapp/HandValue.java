@@ -62,14 +62,38 @@ public class HandValue {
         int[] combo_value;
         
         for (Card[] combination : combinations) {
-            combo_value = checkMatches(combination);
-            if (combo_value[0] > hand_value[0] || 
-                    ((combo_value[1] > hand_value[1] || combo_value[2] > hand_value[2]
-                    || combo_value[3] > hand_value[3] || combo_value[4] > hand_value[4]
-                    || combo_value[5] > hand_value[5] || combo_value[6] > hand_value[6]) 
-                    && combo_value[0] == hand_value[0])) {
-                hand_value = combo_value;
-                hand_cards = combination;
+            int[] f = checkFlush(combination); // Check if it is a flush
+            int[] s = checkStraight(combination); // Check if it is a straight
+            // Check first if it is a royal flush, or a straight flush
+            // If it isn't, then check for the other 
+            if (f[0] > 0 && s[0] > 0) {
+                if (s[1] == 14 && f[1] == 14) {
+                    combo_value = s;
+                    combo_value[0] = royal_flush;
+                } else {
+                    combo_value = s;
+                    combo_value[0] = straight_flush;
+                }
+            } else {
+                int[] m = checkMatches(combination);
+                if (f[0] > m[0]) {
+                    combo_value = f;
+                } else if (s[0] > m[0]) {
+                    combo_value = s;
+                } else {
+                    combo_value = m;
+                }
+            }
+            
+            
+            // Checks if the combination is the best combination the player has.
+            for (int val = 0; val < hand_value.length; val++) {
+                if (combo_value[val] > hand_value[val]) {
+                    hand_value = combo_value;
+                    hand_cards = combination;
+                } else if (combo_value[val] != hand_value[val]) {
+                    break;
+                }
             }
         }
     }
@@ -83,7 +107,7 @@ public class HandValue {
      * @return The hand value of the combination of cards.
      */
     private int[] checkMatches(Card[] combination) {
-        int[] hand_value = new int[7];
+        int[] combo_value = new int[7];
         int[] kicker;
         
         int matches;
@@ -112,64 +136,64 @@ public class HandValue {
             }
             switch (matches) {
                 case 4:
-                    hand_value[0] = four_of_a_kind;
-                    hand_value[1] = combination[i].value;
+                    combo_value[0] = four_of_a_kind;
+                    combo_value[1] = combination[i].value;
                     kicker = findKicker(combination, combination[i].value, 0, 1);
-                    hand_value[3] = kicker[0];
+                    combo_value[3] = kicker[0];
                     break OUTER;
                 case 3:
-                    if (hand_value[0] == pair) {
-                        hand_value[0] = full_house;
-                        hand_value[2] = hand_value[1];
-                        hand_value[1] = combination[i].value;
+                    if (combo_value[0] == pair) {
+                        combo_value[0] = full_house;
+                        combo_value[2] = combo_value[1];
+                        combo_value[1] = combination[i].value;
                         break OUTER;
                     } else {
-                        hand_value[0] = three_of_a_kind;
-                        hand_value[1] = combination[i].value;
+                        combo_value[0] = three_of_a_kind;
+                        combo_value[1] = combination[i].value;
                         kicker = findKicker(combination, combination[i].value, 0, 2);
-                        hand_value[3] = kicker[0];
-                        hand_value[4] = kicker[1];
+                        combo_value[3] = kicker[0];
+                        combo_value[4] = kicker[1];
                     }
                     break;
                 case 2:
-                    if (hand_value[0] == three_of_a_kind) {
-                        hand_value[0] = full_house;
-                        hand_value[2] = combination[i].value;
+                    if (combo_value[0] == three_of_a_kind) {
+                        combo_value[0] = full_house;
+                        combo_value[2] = combination[i].value;
                         break OUTER;
-                    } else if (hand_value[0] == pair) {
-                        if (hand_value[1] != combination[i].value) {
-                            hand_value[0] = two_pair;
-                            if (combination[i].value > hand_value[1]) {
-                                hand_value[2] = hand_value[1];
-                                hand_value[1] = combination[i].value;
+                    } else if (combo_value[0] == pair) {
+                        if (combo_value[1] != combination[i].value) {
+                            combo_value[0] = two_pair;
+                            if (combination[i].value > combo_value[1]) {
+                                combo_value[2] = combo_value[1];
+                                combo_value[1] = combination[i].value;
                             } else {
-                                hand_value[2] = combination[i].value;
-                            }   kicker = findKicker(combination, hand_value[1], hand_value[2], 1);
-                            hand_value[3] = kicker[0];
+                                combo_value[2] = combination[i].value;
+                            }   kicker = findKicker(combination, combo_value[1], combo_value[2], 1);
+                            combo_value[3] = kicker[0];
                             break OUTER;
                         }
                     } else {
-                        hand_value[0] = pair;
-                        hand_value[1] = combination[i].value;
+                        combo_value[0] = pair;
+                        combo_value[1] = combination[i].value;
                         kicker = findKicker(combination, combination[i].value, 0, 3);
-                        hand_value[3] = kicker[0];
-                        hand_value[4] = kicker[1];
-                        hand_value[5] = kicker[2];
+                        combo_value[3] = kicker[0];
+                        combo_value[4] = kicker[1];
+                        combo_value[5] = kicker[2];
                     }
                     break;
                 default:
-                    if (hand_value[0] == 0 && hand_value[1] < combination[i].value) {
-                        hand_value[1] = combination[i].value;
+                    if (combo_value[0] == 0 && combo_value[1] < combination[i].value) {
+                        combo_value[1] = combination[i].value;
                         kicker = findKicker(combination, combination[i].value, 0, 4);
-                        hand_value[3] = kicker[0];
-                        hand_value[4] = kicker[1];
-                        hand_value[5] = kicker[2];
-                        hand_value[6] = kicker[3];
+                        combo_value[3] = kicker[0];
+                        combo_value[4] = kicker[1];
+                        combo_value[5] = kicker[2];
+                        combo_value[6] = kicker[3];
                     }   break;
             }
         }
         
-        return hand_value;
+        return combo_value;
     }
     
     /**
@@ -196,337 +220,60 @@ public class HandValue {
         return kicker;
     }
     
-     /*
-    Check for a flush
-    private int checkFlush(int[][] pot) {
-        int matching = 1;
-        int f = 0;
-        
-        for (int i = 0; i < cards.length; i += 1) {
-            if (cards[i][0] == cards[cards.length-1-i][0]) {
-                matching += 1;
+    /**
+     * Checks the combination for a straight.
+     * For a combination to be a straight, each card must be the next
+     * card in order ie K Q J 10 9 or 8 7 6 5 4
+     * 
+     * @param combination The combination of cards being checked.
+     * @return The hand value of the combination. Empty if it isn't a straight.
+     */
+    private int[] checkStraight(Card[] combination) {
+        int[] combo_value = new int[7];
+        boolean s = true; // True if the combination is a straight.
+        // Checks that the next card is the next card in order.
+        for (int i = 0; i < combination.length-1; i++) {
+            if (combination[i].value != combination[i+1].value+1) {
+                s = false;
+                break;
             }
-            for (int j = 0; j < pot.length; j += 1) {
-                if (pot[j][1] != 0) {
-                    if (cards[i][0] == pot[j][0]) {
-                        matching += 1;
-                    }
-                    if (matching == 5) {
-                        int highest = cards[i][1];
-                        if (i > 0) {
-                            if (cards[i][0] == cards[i-1][0]) {
-                                if (highest < cards[i-1][1]) {
-                                    highest = cards[i-1][1];
-                                }
-                            }
-                        } else {
-                            if (cards[i][0] == cards[i+1][0]) {
-                                if (highest < cards[i+1][1]) {
-                                    highest = cards[i+1][1];
-                                }
-                            }
-                        }
-                        for (int k = 0; k < pot.length; k += 1) {
-                            if (pot[k][0] == cards[i][0]) {
-                                if (highest < pot[k][1]) {
-                                    highest = pot[k][1];
-                                }
-                            }
-                        }
-                        return highest;
-                    }
-                }
-            }
-            matching = 1;
         }
         
-        return f;
+        if (s) {
+            combo_value[0] = straight;
+            combo_value[1] = combination[0].value;
+            combo_value[3] = combination[1].value;
+            combo_value[4] = combination[2].value;
+            combo_value[5] = combination[3].value;
+            combo_value[6] = combination[4].value;
+        }
+        
+        return combo_value;
     }
     
-    */
-    
-    
-    /*
-    Checks if the player has any matches.
-    public ArrayList<ArrayList<int[]>> checkMatches(int[][] pot) {
-        ArrayList<ArrayList<int[]>> matches = new ArrayList<>();
-        ArrayList<int[]> m;
-        
-        int i, j;
-        for (i = 0; i < pot.length; i += 1) {
-            if (pot[i][1] != 0) {
-                j = i;
-                m = new ArrayList<>();
-                while (j < pot.length) {
-                    if (j != i) {
-                        if (pot[i][1] == pot[j][1]) {
-                            m.add(pot[i]);
-                            m.add(pot[j]);
-                            if (!matches.contains(m)) {
-                                matches.add(m);
-                            }
-                        }
-                    }
-                    j += 1;
-                }
-
-                // Matching with the first card
-                if (cards[0][1] == pot[i][1]) {
-                    m.add(cards[0]);
-                    
-                    // Matching with the second card
-                    if (cards[1][1] == pot[i][1]) {
-                        m.add(cards[1]);
-                    }
-                    
-                    if (!m.contains(pot[i])) {
-                        m.add(pot[i]);
-                    }
-                    
-                    if (!matches.contains(m)) {
-                        matches.add(m);
-                    }
-                
-                } else if (cards[1][1] == pot[i][1]) {
-                    m.add(cards[1]);
-                    
-                    if (!m.contains(pot[i])) {
-                        m.add(pot[i]);
-                    }
-                    
-                    if (!matches.contains(m)) {
-                        matches.add(m);
-                    }
-                }
-            }
-            
-            m = new ArrayList<>();
-            if (cards[1][1] == cards[0][1]) {
-                m.add(cards[1]);
-                m.add(cards[0]);
-                if (!matches.contains(m)) {
-                    matches.add(m);
-                }
+    /**
+     * Checks the if the combination is a flush.
+     * All the cards must have the same suit.
+     * 
+     * @param combination The card combinations being checked
+     * @return The hand value of the combination. Empty if it isn't a flush.
+     */
+    private int[] checkFlush(Card[] combination) {
+        int[] combo_value = new int[7];
+        boolean f = true; // True if the combination is a flush
+        // Checks that all the cards are the same suit
+        for (int i = 0; i < combination.length-1; i++) {
+            if (combination[i].suit != combination[i+1].suit) {
+                f = false;
+                break;
             }
         }
+        // It is a flush so set combo as a flush.
+        if (f) {
+            combo_value[0] = flush;
+            combo_value[1] = combination[0].value;
+        }
         
-        return matches;
+        return combo_value;
     }
-    
-    */
-    
-    
-    /*
-    Checks if the player has any pairs.
-    public int[] checkPair(ArrayList<ArrayList<int[]>> matches) {
-        int[] pairs = new int[3];
-        
-        for (int i = 0; i < matches.size(); i += 1) {
-            switch (matches.get(i).size()) {
-                case 4:
-                    pairs[0] = 7;
-                    pairs[1] = matches.get(i).get(0)[1];
-                    break;
-                case 3:
-                    if (pairs[0] < 3) {
-                        if (pairs[0] <= 2) {
-                            // full house
-                            pairs[0] = 6;
-                            pairs[2] = pairs[1];
-                            pairs[1] = pairs[1] = matches.get(i).get(0)[1];
-                        } else {
-                            pairs[0] = 3;
-                            if (pairs[1] < matches.get(i).get(0)[1]) {
-                                pairs[1] = matches.get(i).get(0)[1];
-                            }
-                        }
-                    } else if (pairs[0] == 6) {
-                        if (pairs[1] < matches.get(i).get(0)[1]) {
-                            pairs[1] = matches.get(i).get(0)[1];
-                        }
-                    }
-                    break;
-                case 2:
-                    if (pairs[0] == 0) {
-                        pairs[0] = 1;
-                        pairs[1] = matches.get(i).get(0)[1];
-                    } else if (pairs[0] == 1) {
-                        pairs[0] = 2;
-                        if (pairs[1] < matches.get(i).get(0)[1]) {
-                            pairs[2] = pairs[1];
-                            pairs[1] = matches.get(i).get(0)[1];
-                        } else if (pairs[2] < matches.get(i).get(0)[1]) {
-                            pairs[2] = matches.get(i).get(0)[1];
-                        }
-                    } else if (pairs[0] == 3) {
-                        // Full house
-                        pairs[0] = 6;
-                        if (pairs[2] > matches.get(i).get(0)[1]) {
-                            pairs[2] = matches.get(i).get(0)[1];
-                        }
-                    } else if (pairs[0] == 6) {
-                        if (pairs[2] > matches.get(i).get(0)[1]) {
-                            pairs[2] = matches.get(i).get(0)[1];
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        
-        return pairs;
-    }
-    
-    */
-    
-    /*
-    private ArrayList<ArrayList<int[]>> addToStraights(ArrayList<ArrayList<int[]>> straights, int[] card1, int[] card2) {
-        ArrayList<int[]> straight;
-        boolean flag = true;
-        
-        if (!straights.isEmpty()) {
-            for (ArrayList<int[]> s : straights) {
-                int n = 0;
-                while (n < s.size()) {
-                    flag = true;
-                    if (card1[1] == s.get(n)[1] + 1 || card1[1] == s.get(n)[1] - 1) {
-                        for (int[] c : s) {
-                            if (c[1] == card1[1]) {
-                                flag = false;
-                            }
-                        }
-                        if(flag) {
-                            s.add(card1);
-                        }
-                    }
-                    
-                    flag = true;
-                    if (card2[1] == s.get(n)[1] + 1 || card2[1] == s.get(n)[1] - 1) {
-                        for (int[] c : s) {
-                            if (c[1] == card2[1]) {
-                                flag = false;
-                            }
-                        }
-                        if(flag) {
-                            s.add(card2);
-                        }
-                    }
-                    n += 1;
-                }
-            }
-        } else {
-            straight = new ArrayList<>();
-            straight.add(card1);
-            straight.add(card2);
-            straights.add(straight);
-        }
-        
-        return straights;
-    }
-    */
-    
-    /*
-    private int checkStraight(int[][] pot) {
-        int value = 0;
-        ArrayList<ArrayList<int[]>> straights = new ArrayList<>();
-        ArrayList<int[]> s = new ArrayList<>();
-        
-        if (cards[0][1] == cards[1][1] + 1 || cards[0][1] == cards[1][1] - 1) {
-            s.add(cards[0]);
-            s.add(cards[1]);
-            straights.add(s);
-        }
-        
-        int i, j;
-        for (i = 0; i < pot.length; i += 1) {
-            if (pot[i][1] != 0) {
-                j = i;
-                while (j < pot.length) {
-                    if (j != i) {
-                        if (pot[i][1] == pot[j][1] + 1 || pot[i][1] == pot[j][1] - 1) {
-                            straights = addToStraights(straights, pot[i], pot[j]);
-                        }
-                    }
-                    j += 1;
-                }
-
-                // Matching with the first card
-                if (cards[0][1] == pot[i][1] + 1 || cards[0][1] == pot[i][1] - 1) {
-                    straights = addToStraights(straights, cards[0], pot[i]);
-                    
-                    // Matching with the second card
-                    if (cards[1][1] == pot[i][1] + 1 || cards[1][1] == pot[i][1] - 1) {
-                        straights = addToStraights(straights, cards[1], pot[i]);
-                    }
-                
-                } else if (cards[1][1] == pot[i][1]) {
-                    straights = addToStraights(straights, cards[1], pot[i]);
-                }
-            }
-        }
-        
-        for (ArrayList<int[]> straight : straights) {
-            if (straight.size() >= 5) {
-                int highest = 0;
-                for (i = 0; i < straight.size(); i += 1) {
-                    if (highest < straight.get(i)[1]) {
-                        highest = straight.get(i)[1];
-                    }
-                }
-                if (value < highest) {
-                    value = highest;
-                }
-            }
-        }
-        
-        return value;
-    }
-    */
-    
-    /*
-    Finds what hand the player has.
-    
-    parameters:
-        - pot, the cards in the pot.
-    public void getHand(int[][] pot) {
-        int s = checkStraight(pot);
-        int f = checkFlush(pot);
-        
-        if (s > 0 && f > 0) {
-            if (f == 14 && s == 14) {
-//                hand_value[0] = royal_flush;
-            }
-//            hand_value[0] = straight_flush;
-//            hand_value[1] = s;
-        } else if (s > 0) {
-            
-//            hand_value[0] = straight;
-//            hand_value[1] = s;
-            
-        } else if (f > 0) {
-
-//            hand_value[0] = flush;
-//            hand_value[1] = f;
-
-        } else {
-
-            ArrayList<ArrayList<int[]>> matches = checkMatches(pot);
-
-            if (matches.size() > 0) {
-                int[] m = checkPair(matches);
-//                hand_value = m;
-            } else {
-//                hand_value[0] = high;
-                if (cards[0][1] > cards[1][1]) {
-//                    hand_value[1] = cards[0][1];
-                } else {
-//                    hand_value[1] = cards[1][1];
-                }
-            }
-            
-        }
-    }
-*/
-    
 }
