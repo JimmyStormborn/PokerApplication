@@ -1,6 +1,8 @@
 package pokerapp;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The main application which runs the poker application.
@@ -66,9 +68,11 @@ public class PokerApp {
                 dealer.setDealer(d + 1);
             }
 
-            // Testing
-//            tester.checkForDoubles(players, this.cards);
-//            tester.printErrors();
+//             Testing
+            
+            tester.checkForDoubles(players, this.pot_cards);
+
+            tester.printErrors();
         }
         
         /**
@@ -87,7 +91,6 @@ public class PokerApp {
                 player.setCards(null, null);
             }
             dealer.dealCards();
-//            printHands();
         }
         
         
@@ -100,10 +103,6 @@ public class PokerApp {
                 this.pot_cards[i] = card;
                 i++;
             }
-//            System.out.println("\nFlop:");
-//            printCards(Arrays.copyOfRange(cards, 0, 3));
-//            
-//            printHands();
         }
         
         // Deal the turn
@@ -111,10 +110,6 @@ public class PokerApp {
             dealer.dealTurn();
             Card[] turn = dealer.getTurn();
             pot_cards[3] = turn[0];
-//            System.out.println("\nTurn:");
-//            printCards(Arrays.copyOfRange(cards, 0, 4));
-//            
-//            printHands();
         }
         
         // Deal the river
@@ -122,10 +117,6 @@ public class PokerApp {
             dealer.dealRiver();
             Card[] river = dealer.getRiver();
             pot_cards[4] = river[0];
-//            System.out.println("\nRiver:");
-//            printCards(cards);
-//            
-//            printHands();
         }
         
         /**
@@ -208,39 +199,84 @@ public class PokerApp {
     /**
      * Main method
      * 
+     * Enter a command to run the program.
+     * 
+     * p, Starts a poker game
+     * t, Tests the program with the test cases
+     * w, Lets the user input test cases
+     * reset, will reset the test cases
+     * q, will quit the program
+     * ?, will give the user the available commands
+     * 
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         PokerApp app = new PokerApp();
         Scanner scan = new Scanner(System.in);
-                    
-        System.out.print("\nEnter the number of players: ");
-        int num = scan.nextInt();
+        
+        // TEST CASES
+        Test tester = new Test();
+        
+        String input = "";
+        while (!"q".equals(input)) {
+            System.out.print("\nPlease enter a command (? for help): ");
+            
+            input = scan.nextLine();
+            if ("t".equals(input) || "T".equals(input)) {
+                try {
+                    tester.testCases();
+                } catch (Exception ex) {
+                    Logger.getLogger(PokerApp.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if ("w".equals(input) || "W".equals(input)) {
+                try {
+                    tester.writeTestCase();
+                } catch (Exception ex) {
+                    Logger.getLogger(PokerApp.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if ("reset".equals(input)) {
+                try {
+                    tester.resetTestCases();
+                } catch (Exception ex) {
+                    Logger.getLogger(PokerApp.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if ("p".equals(input) || "P".equals(input)) {
+                System.out.print("\nEnter the number of players: ");
+                int num = scan.nextInt();
 
-        System.out.print("\nEnter the number of rounds: ");
-        int rounds = scan.nextInt();
+                System.out.print("\nEnter the number of rounds: ");
+                int rounds = scan.nextInt();
 
-        int chips = 2000; // Starting amount of chips.
-        // Create the players.
-        Player[] players = new Player[num];
-        for (int n = 0; n < num; n++) {
-            players[n] = new Player(n+1, chips);
-        }
+                int chips = 2000; // Starting amount of chips.
+                // Create the players.
+                Player[] players = new Player[num];
+                for (int n = 0; n < num; n++) {
+                    players[n] = new Player(n+1, chips);
+                }
 
-        // Create dealer
-        Dealer dealer = new Dealer(players);
-        dealer.shuffleDeck();
-        int d = 1; // The dealers number, which player is dealing
+                // Create dealer
+                Dealer dealer = new Dealer(players);
+                dealer.shuffleDeck();
+                int d = 1; // The dealers number, which player is dealing
 
-        //Create round
-        Round round;
-        round = app.new Round(players, dealer);
+                //Create round
+                Round round;
+                round = app.new Round(players, dealer);
 
-        // Run rounds
-        int r = 1;
-        while (r <= rounds) {
-            round.run();
-            r += 1;
+                // Run rounds
+                int r = 1;
+                while (r <= rounds) {
+                    round.run();
+                    r += 1;
+                }
+            } else if ("?".equals(input)) {
+                System.out.println("p = play a game of poker\n"
+                        + "t = test the program with test cases\n"
+                        + "w = write test cases\n"
+                        + "reset = reset the test cases\n"
+                        + "q = quits the program\n"
+                        + "? = help\n");
+            }
         }
     }
 }

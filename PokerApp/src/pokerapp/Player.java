@@ -60,6 +60,12 @@ public class Player {
         this(playerNum, 2000);
     }
     
+    public Player(Card card1, Card card2, int playerNum) {
+        this.player_cards[0] = card1;
+        this.player_cards[1] = card2;
+        this.playerNum = playerNum;
+    }
+    
     /**
      * Retrieves the players cards.
      * 

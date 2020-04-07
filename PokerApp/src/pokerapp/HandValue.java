@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * royal-flush=9
  *
  * @author James Bird-Sycamore
- * @date 28/03/2020
+ * Last Updated 30/03/2020
  */
 public class HandValue {
     
