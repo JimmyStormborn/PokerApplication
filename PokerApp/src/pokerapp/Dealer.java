@@ -3,6 +3,9 @@ package pokerapp;
 import java.util.*;
 
 /**
+ * Handles the dealer for the poker game.
+ * 
+ * Creates the deck, shuffles and deals the cards.
  *
  * @author James Bird-Sycamore
  * @date 22/03/2020

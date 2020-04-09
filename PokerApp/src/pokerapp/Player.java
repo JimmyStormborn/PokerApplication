@@ -129,7 +129,6 @@ public class Player {
      */
     public void getCombinations(Card[] pot) {
         this.combinations = new ArrayList<>();
-//        Parser parser = new Parser(); 
         
         // Get all the cards that the player can use.
         Card[] cards = new Card[7];
@@ -182,15 +181,6 @@ public class Player {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-//        for (Card[] combination : combinations) {
-//            for (Card card : combination) {
-//                if (card != null) {
-//                    System.out.print(parser.cardToString(card) + " ");
-//                }
-//            }
-//            System.out.println();
-//        }
     }
     
     /**
