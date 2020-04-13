@@ -12,32 +12,22 @@ import java.util.logging.Logger;
  * chips, and is able to find what the players hand value is.
  *
  * @author James Bird-Sycamore
- * @date 27/03/2020
+ * @date 11/04/2020
  */
 public class Player {
-    
-    // Placeholders
-    
-    int high = 0;
-    int pair = 1;
-    int two_pair = 2;
-    int three_of_a_kind = 3;
-    int straight = 4;
-    int flush = 5;
-    int full_house = 6;
-    int four_of_a_kind = 7;
-    int straight_flush = 8;
-    int royal_flush = 9;
     
     // Variables
     
     private Card[] player_cards = new Card[2]; // The players cards
     public ArrayList<Card[]> combinations = new ArrayList<>(); // All possible combinations of cards for the player's hand
-    private int chips; // The amount of chips the player has
+    public int chips; // The amount of chips the player has
     final public int playerNum; // The player's number
     public Card[] hand_cards = new Card[5]; // The best possible combination of cards the player has
     public int[] hand_value = new int[6]; // The value of the player's hand
     public boolean fold = false; // Whether the player has folded or not.
+    public boolean computer = false;
+    public boolean allin = false;
+    public int current_bet = 0;
     
     /**
      * Default Constructor: Creates the player object.

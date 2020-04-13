@@ -8,22 +8,21 @@ import java.util.ArrayList;
  * royal-flush=9
  *
  * @author James Bird-Sycamore
- * Last Updated 30/03/2020
+ * Last Updated 11/04/2020
  */
 public class HandValue {
     
     // Placeholders
     
-    int high = 0;
-    int pair = 1;
-    int two_pair = 2;
-    int three_of_a_kind = 3;
-    int straight = 4;
-    int flush = 5;
-    int full_house = 6;
-    int four_of_a_kind = 7;
-    int straight_flush = 8;
-    int royal_flush = 9;
+    private final int pair = 1;
+    private final int two_pair = 2;
+    private final int three_of_a_kind = 3;
+    private final int straight = 4;
+    private final int flush = 5;
+    private final int full_house = 6;
+    private final int four_of_a_kind = 7;
+    private final int straight_flush = 8;
+    private final int royal_flush = 9;
     
     // Global Variables
     private int[] hand_value = new int[7];

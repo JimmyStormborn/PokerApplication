@@ -8,7 +8,7 @@ import java.util.logging.Logger;
  * The main application which runs the poker application.
  *
  * @author James Bird-Sycamore
- * Last Updated 08/04/2020
+ * Last Updated 11/04/2020
  */
 public class PokerApp {
     
@@ -71,9 +71,6 @@ public class PokerApp {
                 System.out.print("\nEnter the number of players: ");
                 int num = scan.nextInt();
 
-                System.out.print("\nEnter the number of rounds: ");
-                int rounds = scan.nextInt();
-
                 int chips = 2000; // Starting amount of chips.
                 // Create the players.
                 Player[] players = new Player[num];
@@ -91,11 +88,7 @@ public class PokerApp {
                 round = new Round(players);
 
                 // Run rounds
-                int r = 1;
-                while (r <= rounds) {
-                    round.run();
-                    r += 1;
-                }
+                round.run();
             } else if ("?".equals(input)) {
                 System.out.println("p = play a game of poker\n"
                         + "t = test the program with test cases\n"
