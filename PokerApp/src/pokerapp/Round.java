@@ -321,6 +321,7 @@ public class Round {
             int n = 0;
             while (n < num_of_winners) {
                 players[winners[n]-1].chips += (pot_chips / num_of_winners);
+                n++;
             }
         } else {
             players[winner-1].chips += pot_chips;

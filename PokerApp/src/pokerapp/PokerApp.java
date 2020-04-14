@@ -68,6 +68,7 @@ public class PokerApp {
                     Logger.getLogger(PokerApp.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else if ("p".equals(input) || "P".equals(input)) {
+                System.out.print("\nEnter the number of players: ");
                 int num = scan.nextInt();
                 if (num > 0 && num <= 10) {
                     int chips = 2000; // Starting amount of chips.
