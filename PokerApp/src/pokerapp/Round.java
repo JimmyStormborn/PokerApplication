@@ -345,11 +345,21 @@ public class Round {
         }
     }
     
+    /**
+     * Player command to fold.
+     * 
+     * @param player The player that is folding.
+     */
     private void playerFold(Player player) {
         player.fold = true;
         System.out.println("\nPlayer" + player.playerNum + " folds.");
     }
     
+    /**
+     * Player command to check or call.
+     * 
+     * @param player The player that is calling. 
+     */
     private void playerCall(Player player) {
         if (player.current_bet < current_bet) {
             System.out.print("\nPlayer" + player.playerNum + " calls ");
@@ -372,6 +382,11 @@ public class Round {
         }
     }
     
+    /**
+     * Player command to raise.
+     * 
+     * @param player The player that is raising.
+     */
     private void playerRaise(Player player) {
         Scanner scan = new Scanner(System.in);
         
@@ -416,6 +431,8 @@ public class Round {
         String input;
         boolean flag;
         boolean raise = false;
+        int num_of_allin = 0;
+        int num_of_folded = 0;
 
         // Figure out who starts the turn off
         int p; // The current players turn
@@ -439,7 +456,12 @@ public class Round {
             
             flag = true;
             while (flag) {
-                if (players[p].fold || players[p].allin) {
+                if (players[p].fold) {
+                    num_of_folded++;
+                    input = null;
+                    flag = false;
+                } else if (players[p].allin) {
+                    num_of_allin++;
                     input = null;
                     flag = false;
                 } else if (players[p].computer) {
@@ -467,7 +489,17 @@ public class Round {
                     }
                 }
             }
+            if (num_of_folded >= players.length-1) {
+                break;
+            }
+            
+            if (num_of_allin == players.length) {
+                break;
+            }
+            
             System.out.println("\nPot Chips: " + pot_chips);
+            System.out.println("Press Enter to Continue...");
+            scan.nextLine();
             
             // If there is a raise, any player who hasn't folded has to go again.
             if (raise) {
