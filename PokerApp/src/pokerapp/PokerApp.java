@@ -8,7 +8,7 @@ import java.util.logging.Logger;
  * The main application which runs the poker application.
  *
  * @author James Bird-Sycamore
- * Last Updated 11/04/2020
+ * Last Updated 14/04/2020
  */
 public class PokerApp {
     
@@ -70,25 +70,30 @@ public class PokerApp {
             } else if ("p".equals(input) || "P".equals(input)) {
                 System.out.print("\nEnter the number of players: ");
                 int num = scan.nextInt();
+                if (num > 0 && num <= 10) {
+                    int chips = 2000; // Starting amount of chips.
+                    // Create the players.
+                    Player[] players = new Player[num];
+                    AI simpleAI = new AI(0);
+                    players[0] = new Player(1, chips);
+                    for (int n = 1; n < num; n++) {
+                        players[n] = new Player(n+1, chips, simpleAI);
+                        players[n].computer = true;
+                    }
 
-                int chips = 2000; // Starting amount of chips.
-                // Create the players.
-                Player[] players = new Player[num];
-                for (int n = 0; n < num; n++) {
-                    players[n] = new Player(n+1, chips);
+                    // Create dealer
+                    Dealer dealer = new Dealer(players);
+                    dealer.shuffleDeck();
+
+                    //Create round
+                    Round round;
+                    round = new Round(players);
+
+                    // Run rounds
+                    round.run();
+                } else {
+                    System.err.println("The number of players must be greater than 0 and less than 10");
                 }
-
-                // Create dealer
-                Dealer dealer = new Dealer(players);
-                dealer.shuffleDeck();
-                int d = 1; // The dealers number, which player is dealing
-
-                //Create round
-                Round round;
-                round = new Round(players);
-
-                // Run rounds
-                round.run();
             } else if ("?".equals(input)) {
                 System.out.println("p = play a game of poker\n"
                         + "t = test the program with test cases\n"

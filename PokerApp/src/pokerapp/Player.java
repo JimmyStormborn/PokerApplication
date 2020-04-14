@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * chips, and is able to find what the players hand value is.
  *
  * @author James Bird-Sycamore
- * @date 11/04/2020
+ * Last Updated 14/04/2020
  */
 public class Player {
     
@@ -21,13 +21,20 @@ public class Player {
     private Card[] player_cards = new Card[2]; // The players cards
     public ArrayList<Card[]> combinations = new ArrayList<>(); // All possible combinations of cards for the player's hand
     public int chips; // The amount of chips the player has
+    
     final public int playerNum; // The player's number
+    public String player_name; // The player's name
+    
     public Card[] hand_cards = new Card[5]; // The best possible combination of cards the player has
     public int[] hand_value = new int[6]; // The value of the player's hand
-    public boolean fold = false; // Whether the player has folded or not.
-    public boolean computer = false;
-    public boolean allin = false;
+    
+    public boolean fold = false; // Whether the player has folded or not
+    public boolean allin = false; // Whether the player is all in or not
+    
     public int current_bet = 0;
+    
+    public boolean computer = false; // Whether the player is a computer or not
+    public AI ai;
     
     /**
      * Default Constructor: Creates the player object.
@@ -38,6 +45,12 @@ public class Player {
     public Player(int playerNum, int chips) {
         this.playerNum = playerNum;
         this.chips = chips;
+    }
+    
+    public Player(int playerNum, int chips, AI ai) {
+        this.playerNum = playerNum;
+        this.chips = chips;
+        this.ai = ai;
     }
     
     /**

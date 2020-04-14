@@ -8,7 +8,7 @@ import java.util.Scanner;
 * and keeps track of each player.
 * 
 * @author James Bird-Sycamore
-* Last Updated 13/04/2020
+* Last Updated 14/04/2020
 */
 public class Round {
    // GLOBAL
@@ -21,7 +21,6 @@ public class Round {
 
    // VARIABLES
    private int round = 0; // The current round
-   private final int chips = 0; // The chips each player starts with
    private Card[] pot_cards = new Card[5]; // The cards in the middle
    private boolean pre_flop = true;
    
@@ -67,8 +66,9 @@ public class Round {
       * Runs the round.
     */
     public void run() {
+        Scanner scan = new Scanner(System.in);
        
-        while (players.length != 1) {
+        while (true) {
             start();
             System.out.println("\nStart:");
             System.out.println("\nPot Chips: " + pot_chips);
@@ -127,12 +127,15 @@ public class Round {
 
             System.out.println(); // Add some whitespace.
             
-            Scanner scan = new Scanner(System.in);
-            System.out.print("Press Enter to start next round, else type q to quit: ");
-            if ("q".equals(scan.nextLine())) {
+            if (players.length == 1) {
                 break;
+            } else {
+                System.out.print("Press Enter to start next round, else type q to quit: ");
+                if ("q".equals(scan.nextLine())) {
+                    break;
+                }
             }
-
+            
             // Change the dealer
             int d = dealer.dealer;
             if (d >= players.length-1) {
@@ -140,9 +143,17 @@ public class Round {
             } else {
                 dealer.setDealer(d + 1);
             }
-       }
+        }
         
-        System.out.println("Congratulations Player" + players[0].playerNum + " you win!");
+        int highest = 0;
+        int highest_chips = 0;
+        for (int p = 0; p < players.length; p++) {
+            if (players[p].chips > highest_chips) {
+                highest = p;
+                highest_chips = players[p].chips;
+            }
+        }
+        System.out.println("Congratulations Player" + players[highest].playerNum + " you win!");
 
        // Testing
        /*
@@ -296,36 +307,113 @@ public class Round {
            }
        }
 
-       if (draw_flag) {
-           System.out.print("Draw between ");
-           for (int d : winners) {
-               if (d != 0) {
-                   System.out.print("Player"+d+" ");
-                   players[d-1].chips += pot_chips / 2;
-               }
-           }
-       } else {
-           players[winner-1].chips += pot_chips;
-           
-           System.out.println("Winner is Player"+winner+"!");
-       }
+        if (draw_flag) {
+            System.out.print("Draw between ");
+            int num_of_winners = 0;
+            // Finds out how many players tied and prints the tied players
+            for (int d : winners) {
+                if (d != 0) {
+                    num_of_winners++;
+                    System.out.print("Player"+d+" ");
+                }
+            }
+            // Distribute chips to tied players
+            int n = 0;
+            while (n < num_of_winners) {
+                players[winners[n]-1].chips += (pot_chips / num_of_winners);
+            }
+        } else {
+            players[winner-1].chips += pot_chips;
+
+            System.out.println("Winner is Player"+winner+"!");
+        }
        
-       return winners;
-   }
+        return winners;
+    }
    
+    /**
+    * Prints the player's cards and there chips.
+    * 
+    * @param player The player being printed.
+    */
     private void printPlayer(Player player) {
         if (!player.computer) {
              int player_num = player.playerNum;
              Card[] player_cards = player.getCards();
-             int[] hand_value = player.hand_value;
+//             int[] hand_value = player.hand_value;
              System.out.println("\nPlayer" + player_num + ": " + parser.cardsToString(player_cards) + "\tChips: " + player.chips);
         }
-   }
+    }
+    
+    private void playerFold(Player player) {
+        player.fold = true;
+        System.out.println("\nPlayer" + player.playerNum + " folds.");
+    }
+    
+    private void playerCall(Player player) {
+        if (player.current_bet < current_bet) {
+            System.out.print("\nPlayer" + player.playerNum + " calls ");
+            if (player.chips <= current_bet) {
+                player.current_bet = player.chips;
+                pot_chips += player.chips;
+                player.chips = 0;
+                player.allin = true;
+                System.out.println(player.current_bet + " chips, they are all in.");
+            } else {
+                int bet = current_bet - player.current_bet;
+                player.chips -= bet;
+                pot_chips += bet;
+                player.current_bet = current_bet;
+                System.out.println(bet + " chips.");
+            }
+            player.current_bet = current_bet;
+        } else {
+            System.out.println("\nPlayer" + player.playerNum + " checks.");
+        }
+    }
+    
+    private void playerRaise(Player player) {
+        Scanner scan = new Scanner(System.in);
+        
+        boolean flag = true;
+        int bet;
+        while (flag) {
+            System.out.print("\nEnter raise amount: ");
+            bet = scan.nextInt();
+            // Player goes all in
+            if (bet + current_bet >= player.chips) {
+                bet = player.chips; // They bet all their chips
+                pot_chips += player.chips; // Adds the chips to the pot
+                player.chips = 0; // Removes all their chips
+                player.current_bet = bet + current_bet; // Their new current bet
+                current_bet = player.current_bet; // The reounds new current bet
+                player.allin = true;
+                System.out.println("\nPlayer" + player.playerNum + " raises " + bet + " chips, they are all in.");
+                flag = false;
+            } else if (bet > 0) {
+                player.chips -= ((bet + current_bet) - player.current_bet); // They remove their chips by the amount they raised above their previous bet.
+                player.current_bet = bet + current_bet; // Their new current bet.
+                current_bet = player.current_bet; // The rounds new current bet.
+                pot_chips += bet; // Adds the chips to the pot
+                System.out.println("\nPlayer" + player.playerNum + " raises " + bet + " chips.");
+                flag = false;
+            } else {
+                System.err.println("Raise must be above 0 chips");
+            }
+        }
+    }
    
+    /**
+     * Runs the players.
+     * 
+     * It goes through each player at each stage of the round,
+     * and if they are a player, it waits for the player's
+     * command for their next move. If they're a computer, it
+     * gets the input from the corresponding AI.
+     */
     private void runPlayers() {
         Scanner scan = new Scanner(System.in);
         String input;
-        int bet;
         boolean flag;
         boolean raise = false;
 
@@ -341,81 +429,45 @@ public class Round {
                 player.current_bet = 0;
             }
         }
-        
-        int n = 0;
+        // Runs through each player for their move.
+        int n = 0; // Tracks how many players have made a move.
         while (n < players.length) {
-           
+            // Wraps around the players
             if (p >= players.length) {
                 p -= players.length;
             }
-           
-            printPlayer(players[p]);
-            bet = 0;
+            
             flag = true;
             while (flag) {
                 if (players[p].fold || players[p].allin) {
+                    input = null;
                     flag = false;
                 } else if (players[p].computer) {
-                    // Add AI
+                    // AI
+                    input = players[p].ai.runAI();
                 } else {
+                    // Player
+                    System.out.println("Pot Cards: " + parser.cardsToString(pot_cards));
+                    printPlayer(players[p]); // Prints the player
                     System.out.print("Enter your move (f = fold, c = call/check, r = raise): ");
                     input = scan.nextLine();
+                }
+                
+                if (input != null) {
                     if ("f".equals(input)) {
-                        players[p].fold = true;
-                        System.out.println("\nPlayer" + players[p].playerNum + " folds.");
+                        playerFold(players[p]);
                         flag = false;
                     } else if ("c".equals(input)) {
-                        if (players[p].current_bet < current_bet) {
-                            System.out.print("\nPlayer" + players[p].playerNum + " calls ");
-                            if (players[p].chips <= current_bet) {
-                                players[p].current_bet = players[p].chips;
-                                pot_chips += players[p].chips;
-                                players[p].chips = 0;
-                                players[p].allin = true;
-                                System.out.println(players[p].current_bet + " chips, they are all in.");
-                            } else {
-                                bet = current_bet - players[p].current_bet;
-                                players[p].chips -= bet;
-                                pot_chips += bet;
-                                players[p].current_bet = current_bet;
-                                System.out.println(bet + " chips.");
-                            }
-                            players[p].current_bet = current_bet;
-                        } else {
-                            System.out.println("\nPlayer" + players[p].playerNum + " checks.");
-                        }
+                        playerCall(players[p]);
                         flag = false;
                     } else if ("r".equals(input)) {
-                        while (flag) {
-                            System.out.print("\nEnter raise amount: ");
-                            bet = scan.nextInt();
-                            // Player goes all in
-                            if (bet + current_bet >= players[p].chips) {
-                                bet = players[p].chips; // They bet all their chips
-                                pot_chips += players[p].chips; // Adds the chips to the pot
-                                players[p].chips = 0; // Removes all their chips
-                                players[p].current_bet = bet + current_bet; // Their new current bet
-                                current_bet = players[p].current_bet; // The reounds new current bet
-                                players[p].allin = true;
-                                System.out.println("\nPlayer" + players[p].playerNum + " raises " + bet + " chips, they are all in.");
-                                flag = false;
-                            } else if (bet > 0) {
-                                players[p].chips -= ((bet + current_bet) - players[p].current_bet); // They remove their chips by the amount they raised above their previous bet.
-                                players[p].current_bet = bet + current_bet; // Their new current bet.
-                                current_bet = players[p].current_bet; // The rounds new current bet.
-                                pot_chips += bet; // Adds the chips to the pot
-                                System.out.println("\nPlayer" + players[p].playerNum + " raises " + bet + " chips.");
-                                flag = false;
-                            } else {
-                                System.err.println("Raise must be above 0 chips");
-                            }
-                        }
+                        playerRaise(players[p]);
                         raise = true;
+                        flag = false;
                     }
                 }
             }
             System.out.println("\nPot Chips: " + pot_chips);
-            
             
             // If there is a raise, any player who hasn't folded has to go again.
             if (raise) {
