@@ -1,5 +1,6 @@
 package pokerapp;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,7 +79,6 @@ public class PokerApp {
                     players[0] = new Player(1, chips);
                     for (int n = 1; n < num; n++) {
                         players[n] = new Player(n+1, chips, simpleAI);
-                        players[n].computer = true;
                     }
 
                     // Create dealer
@@ -94,11 +94,20 @@ public class PokerApp {
                 } else {
                     System.err.println("The number of players must be greater than 0 and less than 10");
                 }
+            } else if ("d".equals(input)) {
+                System.out.println("Gathering data...");
+                Probability prob = new Probability();
+                try {
+                    prob.run();
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(PokerApp.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } else if ("?".equals(input)) {
                 System.out.println("p = play a game of poker\n"
                         + "t = test the program with test cases\n"
                         + "w = write test cases\n"
                         + "reset = reset the test cases\n"
+                        + "d = get all the data for probabilities\n"
                         + "q = quits the program\n"
                         + "? = help");
             }

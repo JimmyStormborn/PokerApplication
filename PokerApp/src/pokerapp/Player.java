@@ -51,6 +51,7 @@ public class Player {
         this.playerNum = playerNum;
         this.chips = chips;
         this.ai = ai;
+        this.computer = true;
     }
     
     /**

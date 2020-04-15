@@ -1,7 +1,6 @@
 package pokerapp;
 
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 /**
 * The round class runs every round of the poker game
@@ -11,56 +10,161 @@ import java.util.Scanner;
 * Last Updated 14/04/2020
 */
 public class Round {
-   // GLOBAL
-    
-   // OBJECTS
-   private Player[] players; // The players in the round
-   private Dealer dealer; // The dealer in the round
-   private Parser parser = new Parser(); // Creates a parser
-   private Test tester = new Test(); // Creates a tester
+    // GLOBAL
 
-   // VARIABLES
-   private int round = 0; // The current round
-   private Card[] pot_cards = new Card[5]; // The cards in the middle
-   private boolean pre_flop = true;
-   
-   private int current_bet = 0;
-   private int pot_chips = 0;
-   private int side_chips = 0;
+    // OBJECTS
+    private Player[] players; // The players in the round
+    private Dealer dealer; // The dealer in the round
+    private Parser parser = new Parser(); // Creates a parser
+    private Test tester = new Test(); // Creates a tester
 
-   final private int min = 10; // The minimum bet
-   final private int small = 10; // The small bet
-   final private int big = 20; // The big bet
+    // VARIABLES
+    private int round = 0; // The current round
+    private Card[] pot_cards = new Card[5]; // The cards in the middle
+    private boolean pre_flop = true;
+
+    private int current_bet = 0;
+    private int pot_chips = 0;
+    private int side_chips = 0;
+
+    final private int min = 10; // The minimum bet
+    final private int small = 10; // The small bet
+    final private int big = 20; // The big bet
    
-   /**
+    /**
     * Constructor: Used to test Program with test cases
     * 
     * @param players
     * @param pot 
     */
-   public Round (Player[] players, Card[] pot) {
-       this.players = players;
-       this.dealer = new Dealer(players);
-       this.pot_cards = pot;
-   }
+    public Round (Player[] players, Card[] pot) {
+        this.players = players;
+        this.dealer = new Dealer(players);
+        this.pot_cards = pot;
+    }
 
-   /**
+    /**
     * Default Constructor: Creates the round object.
     * 
     * @param players The players in the round.
     */
-   public Round(Player[] players) {
-       this.players = players;
-       this.dealer = new Dealer(players);
-   }
+    public Round(Player[] players) {
+        this.players = players;
+        this.dealer = new Dealer(players);
+    }
    
-   public int[] test(int num) {
-       System.out.println("\nTesting Case " + num);
+    /**
+    * Runs the probability round which finds the probability of a hand.
+    */
+    public boolean getProb(Card[] hand) {
+        dealer.shuffleDeck();
+        
+       pot_cards = new Card[5];
+       pot_chips = 0;
+       pre_flop = true;
+       for (Player player : players) {
+           player.setCards(null, null);
+           player.fold = false;
+           player.allin = false;
+       }
+        
+        dealer.dealCards();
+        
+        Random rand = new Random();
+        int p = rand.nextInt(3);
+        players[p].setCards(hand[0], hand[1]);
+        
+        runProb();
+        flop();
+        runProb();
+        turn();
+        runProb();
+        river();
+        runProb();
+        
         for (Player player : players) {
             player.getCombinations(this.pot_cards);
         }
-       return findWinner();
-   }
+        
+        int[] winners = findWinner();
+        
+        for (int w : winners) {
+            if ((w-1) == p) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private void runProb () {
+        String input;
+        boolean flag;
+        boolean raise = false;
+
+        // Figure out who starts the turn off
+        int p; // The current players turn
+        if (pre_flop) {
+            p = dealer.dealer + 3;
+        } else {
+            p = dealer.dealer + 1;
+            // Reset the previous rounds bet
+            current_bet = 0;
+            for (Player player : players) {
+                player.current_bet = 0;
+            }
+        }
+        // Runs through each player for their move.
+        int n = 0; // Tracks how many players have made a move.
+        while (n < players.length) {
+            // Wraps around the players
+            if (p >= players.length) {
+                p -= players.length;
+            }
+            
+            flag = true;
+            while (flag) {
+                // AI
+                input = players[p].ai.runAI();
+                
+                if (input != null) {
+                    if ("f".equals(input)) {
+                        playerFold(players[p]);
+                        flag = false;
+                    } else if ("c".equals(input)) {
+                        playerCall(players[p]);
+                        flag = false;
+                    } else if ("r".equals(input)) {
+                        playerRaise(players[p]);
+                        raise = true;
+                        flag = false;
+                    }
+                }
+            }
+            // If there is a raise, any player who hasn't folded has to go again.
+            if (raise) {
+                n = 1;
+                raise = false;
+            } else {
+                n++;
+            }
+            p++;
+       }
+    }
+   
+    /**
+    * Tests the program's test cases.
+    * 
+    * @param num The test number
+    * @return The winners of the test case
+    */
+    public int[] test(int num) {
+        System.out.println("\nTesting Case " + num);
+         for (Player player : players) {
+             player.getCombinations(this.pot_cards);
+         }
+        return findWinner();
+    }
 
     /**
       * Runs the round.
@@ -301,20 +405,20 @@ public class Round {
                        }
                    }
                }
-            System.out.println("Player"+player.playerNum+"'s hand is "+
-                    parser.cardsToString(player.hand_cards)+"with value "+
-                    parser.handToString(player.hand_value));
+//            System.out.println("Player"+player.playerNum+"'s hand is "+
+//                    parser.cardsToString(player.hand_cards)+"with value "+
+//                    parser.handToString(player.hand_value));
            }
        }
 
         if (draw_flag) {
-            System.out.print("Draw between ");
+//            System.out.print("Draw between ");
             int num_of_winners = 0;
             // Finds out how many players tied and prints the tied players
             for (int d : winners) {
                 if (d != 0) {
                     num_of_winners++;
-                    System.out.print("Player"+d+" ");
+//                    System.out.print("Player"+d+" ");
                 }
             }
             // Distribute chips to tied players
@@ -326,7 +430,7 @@ public class Round {
         } else {
             players[winner-1].chips += pot_chips;
 
-            System.out.println("Winner is Player"+winner+"!");
+//            System.out.println("Winner is Player"+winner+"!");
         }
        
         return winners;
@@ -363,23 +467,23 @@ public class Round {
      */
     private void playerCall(Player player) {
         if (player.current_bet < current_bet) {
-            System.out.print("\nPlayer" + player.playerNum + " calls ");
+//            System.out.print("\nPlayer" + player.playerNum + " calls ");
             if (player.chips <= current_bet) {
                 player.current_bet = player.chips;
                 pot_chips += player.chips;
                 player.chips = 0;
                 player.allin = true;
-                System.out.println(player.current_bet + " chips, they are all in.");
+//                System.out.println(player.current_bet + " chips, they are all in.");
             } else {
                 int bet = current_bet - player.current_bet;
                 player.chips -= bet;
                 pot_chips += bet;
                 player.current_bet = current_bet;
-                System.out.println(bet + " chips.");
+//                System.out.println(bet + " chips.");
             }
             player.current_bet = current_bet;
         } else {
-            System.out.println("\nPlayer" + player.playerNum + " checks.");
+//            System.out.println("\nPlayer" + player.playerNum + " checks.");
         }
     }
     
