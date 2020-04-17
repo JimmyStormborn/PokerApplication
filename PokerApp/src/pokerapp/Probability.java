@@ -3,6 +3,7 @@ package pokerapp;
 import java.io.FileNotFoundException;
 import java.io.File; 
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,10 +29,14 @@ public class Probability {
 //            Logger.getLogger(Probability.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
-//        Parser parser = new Parser();
+        Parser parser = new Parser();
+        DecimalFormat df = new DecimalFormat("##.##");
 
-        File file = new File("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\probabilities.txt");
-        PrintWriter pw = new PrintWriter(file);
+        File handsFile = new File("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\all_hands.txt");
+        PrintWriter handsPW = new PrintWriter(handsFile);
+        
+        File probFile = new File("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\probabilities.txt");
+        PrintWriter probPW = new PrintWriter(probFile);
 
         Player[] players = new Player[3];
         AI simpleAI = new AI(0);
@@ -48,31 +53,40 @@ public class Probability {
         for (int h = 0; h < all_hands.size(); h++) {
             num_of_wins = 0;
             
-            int N = 10000;
-            n = 0;
-            while (n < N) {
-                Round round = new Round(players);
-                wins = round.getProb(all_hands.get(h));
-                if (wins) {
-                    num_of_wins++;
+            if (all_hands.get(h)[0].suit == 0) {
+                String hand = parser.cardsToString(all_hands.get(h)) + "\n";
+                handsPW.write(hand);
+            
+                int N = 1000;
+                n = 0;
+                while (n < N) {
+                    Round round = new Round(players);
+                    wins = round.getProb(all_hands.get(h));
+                    if (wins) {
+                        num_of_wins++;
+                    }
+                    n++;
                 }
-                n++;
+                double prob = (num_of_wins / N);
+                prob *= 100;
+
+                probPW.write(df.format(prob) + "\n");
+
+                double done = (double) (h+1) / all_hands.size();
+                done *= 100;
+
+                System.out.print("Finished " + df.format(done));
+                System.out.print("%\n");
+                
             }
-            double prob = (num_of_wins / N);
-            prob *= 100;
-            
-            pw.write(String.valueOf(prob) + "\n");
-            
-            double done = (double) (h+1) / all_hands.size();
-            done *= 100;
-            
-            System.out.println("Finished " + done + "%");
             
 //            System.out.println(parser.cardsToString(all_hands.get(h)) + " probability to win = " + prob + "%");
         }
         
-        pw.flush();
-        pw.close();
+        probPW.flush();
+        probPW.close();
+        handsPW.flush();
+        handsPW.close();
     }
     
     private ArrayList<Card[]> allHands () {
