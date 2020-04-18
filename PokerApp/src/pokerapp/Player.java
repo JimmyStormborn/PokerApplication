@@ -12,24 +12,24 @@ import java.util.logging.Logger;
  * chips, and is able to find what the players hand value is.
  *
  * @author James Bird-Sycamore
- * Last Updated 14/04/2020
+ * Last Updated 18/04/2020
  */
 public class Player {
     
     // Variables
     
-    private Card[] player_cards = new Card[2]; // The players cards
-    public ArrayList<Card[]> combinations = new ArrayList<>(); // All possible combinations of cards for the player's hand
-    public int chips; // The amount of chips the player has
+    private Card[] player_cards = new Card[2];                  // The players cards
+    public ArrayList<Card[]> combinations = new ArrayList<>();  // All possible combinations of cards for the player's hand
+    public int chips;                           // The amount of chips the player has
     
-    final public int playerNum; // The player's number
-    public String player_name; // The player's name
+    final public int playerNum;                 // The player's number
+    public String player_name;                  // The player's name
     
-    public Card[] hand_cards = new Card[5]; // The best possible combination of cards the player has
-    public int[] hand_value = new int[6]; // The value of the player's hand
+    public Card[] hand_cards = new Card[5];     // The best possible combination of cards the player has
+    public int[] hand_value = new int[6];       // The value of the player's hand
     
-    public boolean fold = false; // Whether the player has folded or not
-    public boolean allin = false; // Whether the player is all in or not
+    public boolean fold = false;    // Whether the player has folded or not
+    public boolean allin = false;   // Whether the player is all in or not
     
     public int current_bet = 0;
     
@@ -47,11 +47,18 @@ public class Player {
         this.chips = chips;
     }
     
+    /**
+     * Constructor: Creates the computer player object.
+     * 
+     * @param playerNum The number identifying the player.
+     * @param chips The amount of chips the player starts with.
+     * @param ai The AI type that the computer uses.
+     */
     public Player(int playerNum, int chips, AI ai) {
         this.playerNum = playerNum;
         this.chips = chips;
         this.ai = ai;
-        this.computer = true;
+        this.computer = true; // It is a computer
     }
     
     /**
@@ -64,6 +71,13 @@ public class Player {
         this(playerNum, 2000);
     }
     
+    /**
+     * Constructor: Used for testing to create a pre made player
+     * 
+     * @param card1 The player's first card
+     * @param card2 The player's second card
+     * @param playerNum The number identifying the player
+     */
     public Player(Card card1, Card card2, int playerNum) {
         this.player_cards[0] = card1;
         this.player_cards[1] = card2;

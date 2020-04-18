@@ -1,36 +1,32 @@
 package pokerapp;
 
-import java.io.FileNotFoundException;
-import java.io.File; 
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class to find the probability of each hand has to win
  * a round of poker.
  *
  * @author James Bird-Sycamore
- * Last Updated 15/04/2020
+ * Last Updated 18/04/2020
  */
 public class Probability {
     
-    public Probability () {
-        
-    }
+    /**
+     * Constructor: Creates the probability object
+     */
+    public Probability () {}
     
+    /**
+     * Runs the program to find the probabilities of all the hands to win.
+     * 
+     * @throws FileNotFoundException If the files do not exist.
+     */
     public void run () throws FileNotFoundException {
-        // Writes all the hand combinations to text file
-//        try {
-//            allHands();
-//        } catch (FileNotFoundException ex) {
-//            Logger.getLogger(Probability.class.getName()).log(Level.SEVERE, null, ex);
-//        }
 
-        Parser parser = new Parser();
-        DecimalFormat df = new DecimalFormat("##.##");
+        Parser parser = new Parser(); // Writes the cards to a string
+        DecimalFormat df = new DecimalFormat("##.##"); // The format for the doubles
 
         File handsFile = new File("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\all_hands.txt");
         PrintWriter handsPW = new PrintWriter(handsFile);
@@ -38,6 +34,7 @@ public class Probability {
         File probFile = new File("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\probabilities.txt");
         PrintWriter probPW = new PrintWriter(probFile);
 
+        // Create the player in the round, all are computer players
         Player[] players = new Player[3];
         AI simpleAI = new AI(0);
         int n = 1;
@@ -46,55 +43,60 @@ public class Probability {
             n++;
         }
         
-        ArrayList<Card[]> all_hands = allHands();
+        ArrayList<Card[]> all_hands = allHands(); // Get all the possible poker hands
         
-        boolean wins;
-        double num_of_wins;
+        boolean wins; // True if the hand wins
+        double num_of_wins; // The number of times a hand wins
+        // Finds out the probability of all the hands
         for (int h = 0; h < all_hands.size(); h++) {
             num_of_wins = 0;
-            
+            // Removes any double hands
             if (all_hands.get(h)[0].suit == 0) {
                 String hand = parser.cardsToString(all_hands.get(h)) + "\n";
-                handsPW.write(hand);
+                handsPW.write(hand); // Writes the hands to file
             
-                int N = 1000;
-                n = 0;
+                int N = 1000; // The number of rounds each hand does
+                n = 0; // The current round
                 while (n < N) {
-                    Round round = new Round(players);
-                    wins = round.getProb(all_hands.get(h));
+                    Round round = new Round(players); // New round each time
+                    wins = round.getProb(all_hands.get(h)); // Runs the get probability round
                     if (wins) {
                         num_of_wins++;
                     }
                     n++;
                 }
-                double prob = (num_of_wins / N);
-                prob *= 100;
+                double prob = (num_of_wins / N); // The probabilty a hand has to win
+                prob *= 100; 
 
                 probPW.write(df.format(prob) + "\n");
 
-                double done = (double) (h+1) / all_hands.size();
+                double done = (double) (h+1) / all_hands.size(); // The percent of hands checked
                 done *= 100;
 
                 System.out.print("Finished " + df.format(done));
                 System.out.print("%\n");
                 
             }
-            
-//            System.out.println(parser.cardsToString(all_hands.get(h)) + " probability to win = " + prob + "%");
         }
         
         probPW.flush();
         probPW.close();
+        
         handsPW.flush();
         handsPW.close();
     }
     
+    /**
+     * Creates a list of all the possible hands.
+     * 
+     * @return The list of hands
+     */
     private ArrayList<Card[]> allHands () {
         ArrayList<Card[]> all_hands = new ArrayList();
         
         Card[] cards = new Card[52];
         int n = 0;
-        
+        // Creates a deck
         for (int val = 2; val <= 14; val++) {
             for (int suit = 0; suit < 4; suit++) {
                 cards[n] = new Card(suit, val);
@@ -103,6 +105,7 @@ public class Probability {
         }
         
         Card[] hand;
+        // Finds all the possible hands
         for (int i = 0; i < cards.length-1; i++) {
             int j = i+1;
             while (j < cards.length) {
@@ -116,54 +119,4 @@ public class Probability {
         
         return all_hands;
     }
-    
-    /**
-    private void allHands () throws FileNotFoundException {
-        File file = new File("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\all_hands.txt");
-        
-        String[] cards = new String[52];
-        int n = 0;
-        
-        for (int val = 2; val <= 14; val++) {
-            for (int suit = 0; suit < 4; suit++) {
-                cards[n] = Integer.toString(val);
-                switch (suit) {
-                    case 0:
-                        cards[n] += "S";
-                        break;
-                    case 1:
-                        cards[n] += "C";
-                        break;
-                    case 2:
-                        cards[n] += "D";
-                        break;
-                    case 3:
-                        cards[n] += "H";
-                        break;
-                }
-                n++;
-            }
-        }
-        
-        ArrayList<String> allhands = new ArrayList();
-        String hand;
-        for (int i = 0; i < cards.length-1; i++) {
-            int j = i+1;
-            while (j < cards.length) {
-                hand = cards[i] + ", ";
-                hand += cards[j] + "\n";
-                allhands.add(hand);
-                j++;
-            }
-        }
-        
-        PrintWriter pw = new PrintWriter(file);
-        for (String h : allhands) {
-            pw.write(h);
-        }
-        
-        pw.flush();
-        pw.close();
-    }
-    */
 }

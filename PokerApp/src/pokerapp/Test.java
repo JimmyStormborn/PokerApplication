@@ -2,11 +2,8 @@ package pokerapp;
 
 import java.util.ArrayList;
 
-import java.io.FileReader; 
-import java.io.PrintWriter;
-import java.util.LinkedHashMap;
-import java.util.Map; 
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
   
 import org.json.simple.JSONArray; 
 import org.json.simple.JSONObject; 

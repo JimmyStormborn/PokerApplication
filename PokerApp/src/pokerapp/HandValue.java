@@ -3,12 +3,14 @@ package pokerapp;
 import java.util.ArrayList;
 
 /**
+ * Finds the hand value of the player.
+ * 
  * Hand values: high-card=0, pair=1, two-pair=2, three-of-a-kind=3,
  * straight=4, flush=5, full-house=6, four-of-a-kind=7, straight-flush=8,
  * royal-flush=9
  *
  * @author James Bird-Sycamore
- * Last Updated 11/04/2020
+ * Last Updated 18/04/2020
  */
 public class HandValue {
     
@@ -25,8 +27,8 @@ public class HandValue {
     private final int royal_flush = 9;
     
     // Global Variables
-    private int[] hand_value = new int[7];
-    private Card[] hand_cards = new Card[5];
+    private int[] hand_value = new int[7]; // The player's hand value
+    private Card[] hand_cards = new Card[5]; // The player's cards
     
     /**
      * Constructor: Creates the HandValue object.
@@ -106,47 +108,56 @@ public class HandValue {
      * @return The hand value of the combination of cards.
      */
     private int[] checkMatches(Card[] combination) {
-        int[] combo_value = new int[7];
-        int[] kicker;
+        int[] combo_value = new int[7]; // The current hand value
+        int[] kicker; // The kickers in the hand
         
-        int matches;
+        int matches; // The amount of cards matching.
         int n, j;
         OUTER:
+        // Figures out how many cards are matching in the combination of cards.
         for (int i = 0; i < combination.length; i++) {
             matches = 0;
-            n = 0;
-            j = 1 + i;
+            n = 0; // Tracks how many cards have been checked
+            j = 1 + i; // The card being checked with the current card
             while (n < 4) {
                 // If true, wrap around to the start.
                 if (j >= combination.length) {
                     j -= combination.length;
                 }
+                
                 // If true, we have a match.
                 if (combination[i].value == combination[j].value) {
+                    // If there is no previous matches, then there are now
+                    // two matches, otherwise just add one more match
                     if (matches == 0) {
                         matches = 2;
                     } else {
-                        matches +=1 ;
+                        matches += 1 ;
                     }
                 }
                 
                 j++;
                 n++;
             }
+            // Figures out what type of hand you have based on your matches
             switch (matches) {
                 case 4:
+                    // Four of a Kind
                     combo_value[0] = four_of_a_kind;
                     combo_value[1] = combination[i].value;
                     kicker = findKicker(combination, combination[i].value, 0, 1);
                     combo_value[3] = kicker[0];
                     break OUTER;
                 case 3:
+                    // If there is a pair already, it is a full house
                     if (combo_value[0] == pair) {
+                        // Full House
                         combo_value[0] = full_house;
                         combo_value[2] = combo_value[1];
                         combo_value[1] = combination[i].value;
                         break OUTER;
                     } else {
+                        // Three of a Kind
                         combo_value[0] = three_of_a_kind;
                         combo_value[1] = combination[i].value;
                         kicker = findKicker(combination, combination[i].value, 0, 2);
@@ -155,23 +166,30 @@ public class HandValue {
                     }
                     break;
                 case 2:
+                    // If there is a three of a kind already, it is a full house
                     if (combo_value[0] == three_of_a_kind) {
+                        // Full House
                         combo_value[0] = full_house;
                         combo_value[2] = combination[i].value;
                         break OUTER;
                     } else if (combo_value[0] == pair) {
+                        // Checks to see if there is another pair, therefore it is a two pair
                         if (combo_value[1] != combination[i].value) {
+                            // Two Pair
                             combo_value[0] = two_pair;
+                            // Puts the two pairs in order
                             if (combination[i].value > combo_value[1]) {
                                 combo_value[2] = combo_value[1];
                                 combo_value[1] = combination[i].value;
                             } else {
                                 combo_value[2] = combination[i].value;
-                            }   kicker = findKicker(combination, combo_value[1], combo_value[2], 1);
+                            }   
+                            kicker = findKicker(combination, combo_value[1], combo_value[2], 1);
                             combo_value[3] = kicker[0];
                             break OUTER;
                         }
                     } else {
+                        // Pair
                         combo_value[0] = pair;
                         combo_value[1] = combination[i].value;
                         kicker = findKicker(combination, combination[i].value, 0, 3);
@@ -181,6 +199,7 @@ public class HandValue {
                     }
                     break;
                 default:
+                    // High Card
                     if (combo_value[0] == 0 && combo_value[1] < combination[i].value) {
                         combo_value[1] = combination[i].value;
                         kicker = findKicker(combination, combination[i].value, 0, 4);
