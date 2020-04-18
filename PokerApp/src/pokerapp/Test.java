@@ -13,7 +13,7 @@ import org.json.simple.parser.*;
  * Tests the program for any errors.
  *
  * @author James Bird-Sycamore
- * @date 08/04/2020
+ * @date 18/04/2020
  */
 public class Test {
     
@@ -88,7 +88,7 @@ public class Test {
         // Set up the parser
         JSONParser JSONparser = new JSONParser();
         // Parse the file to an object
-        Object obj = JSONparser.parse(new FileReader("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\test_cases.json"));
+        Object obj = JSONparser.parse(new FileReader("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\test_cases.json"));
         // Change the object into a JSON object
         JSONObject json = (JSONObject) obj;
         
@@ -159,7 +159,7 @@ public class Test {
         // Set up the parser
         JSONParser parser = new JSONParser();
         // Parse the file to an object
-        Object obj = parser.parse(new FileReader("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\test_cases.json"));
+        Object obj = parser.parse(new FileReader("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\test_cases.json"));
         // Change the object into a JSON object
         JSONObject json = (JSONObject) obj;
         // Scan the input from the user
@@ -282,7 +282,7 @@ public class Test {
         json.put("tests", tests);
 
         // Write everthing to the file
-        PrintWriter pw = new PrintWriter("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\test_cases.json");
+        PrintWriter pw = new PrintWriter("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\test_cases.json");
         pw.write(json.toJSONString());
 
         pw.flush();
@@ -297,7 +297,7 @@ public class Test {
     public void resetTestCases() throws Exception {
         JSONObject json = new JSONObject();
         
-        PrintWriter pw = new PrintWriter("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\test_cases.json");
+        PrintWriter pw = new PrintWriter("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\test_cases.json");
         pw.write(json.toJSONString());
         
         pw.flush();

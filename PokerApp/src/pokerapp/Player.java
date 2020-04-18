@@ -163,7 +163,7 @@ public class Player {
         n++;
         cards[n] = player_cards[1];
         
-        File file = new File("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\all_possible_combinations.txt");
+        File file = new File("C:\\Users\\kylar\\Documents\\PokerApplication\\PokerApp\\src\\pokerapp\\text\\all_possible_combinations.txt");
         Scanner scan;
         try {
             scan = new Scanner(file);
