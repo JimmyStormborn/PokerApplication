@@ -11,16 +11,16 @@ import java.util.*;
  * @date 22/03/2020
  */
 public class Dealer {
-    private Player[] players;                   // The players in the round
-    public Card[] deck = makeDeck();            // The deck of playing cards
-    private int pos = 0;                        // The position in the deck
+    private Player[] players;             // The players in the round
+    public Card[] deck = makeDeck();      // The deck of playing cards
+    private int pos = 0;                  // The position in the deck
     private Card[] flop = new Card[3];    // The cards in the flop
     private Card[] turn = new Card[1];    // The cards in the turn
     private Card[] river = new Card[1];   // The cards in the river
-    private boolean flopped = false;            // Flag indicating the flop has been dealt
-    private boolean turned = false;             // Flag indicating the turn has been dealt
-    private boolean rivered = false;            // Flag indicating the river has been dealt
-    public int dealer = 0;                     // The number of who is dealing
+    private boolean flopped = false;      // Flag indicating the flop has been dealt
+    private boolean turned = false;       // Flag indicating the turn has been dealt
+    private boolean rivered = false;      // Flag indicating the river has been dealt
+    public int dealer = 0;                // The number of who is dealing
     
     /**
      * Constructor: creates the dealer object.
@@ -33,6 +33,8 @@ public class Dealer {
     
     /**
      * Changes the dealer
+     * 
+     * Resets all the cards.
      * 
      * @param dealer The number representing the new dealer.
      */
@@ -85,6 +87,8 @@ public class Dealer {
     
     /**
      * Deals the flop.
+     * 
+     * Deals the first 3 cards.
      */
     public void dealFlop() {
         int i = 0;
@@ -98,6 +102,8 @@ public class Dealer {
     
     /**
      * Deals the turn.
+     * 
+     * Deals the next card.
      */
     public void dealTurn() {
         if (flopped) {
@@ -111,6 +117,8 @@ public class Dealer {
     
     /**
      * Deals the river.
+     * 
+     * Deals the next and final card.
      */
     public void dealRiver() {
         if (flopped) {
@@ -163,8 +171,7 @@ public class Dealer {
     }
     
     /**
-     * Gets the cards of the deck and shuffles them
-     * into a random order.
+     * Gets all the cards of the deck.
      * 
      * @return The shuffled deck. 
      */
@@ -183,6 +190,9 @@ public class Dealer {
     
     /**
      * Shuffles the cards.
+     * 
+     * It shuffles the cards 270 times because that is the value it needs
+     * to be shuffled to be sure all the cards are shuffled at least once.
      */
     public void shuffleDeck() {
         Random rand = new Random();
@@ -190,10 +200,10 @@ public class Dealer {
         int card1;
         int card2;
         int n = 0;
-        int N = 270;
+        int N = 270; // The amount times it swaps cards, estimated to shuffle all cards.
         while (n < N) {
-            card1 = rand.nextInt(52);
-            card2 = rand.nextInt(52);
+            card1 = rand.nextInt(52); // First card being swapped
+            card2 = rand.nextInt(52); // The cards the first is being swapped with
             
             Card temp = deck[card1];
             deck[card1] = deck[card2];

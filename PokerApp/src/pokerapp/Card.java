@@ -7,6 +7,7 @@ package pokerapp;
  * Last Updated: 28/03/2020
  */
 public class Card {
+    
     public int suit;
     public int value;
     
