@@ -26,6 +26,8 @@ Next it runs the poker round for each hand to find out if the hand wins. The pla
 After each it has found the probability of a hand, it writes it to a text file for storage. From here I take the data and put it into a speadsheet to be able to visualise the data.
 
 There is some margin of error, since the randomness is sudo random it doesn't represent the randomness of a poker game accurately, therefore the probabilities are probably slightly higher or lower than a real game. 
+
+## Testing
   
 ## Goal
 The goal of this program is to find out likelihood each hand has to win where every player plays till the end of the round. To find the probabilities of each hand would help a player decide how good theie hand is before the flop.
