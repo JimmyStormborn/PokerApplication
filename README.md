@@ -16,7 +16,7 @@ To write this code I used Java 8 1.8.0_191 and the NetBeans 8.2 IDE.
   2. Download the build folder from the project.
   3. Open command prompt
   4. To run the program type "java -jar 'path/build/PokerApp.jar'", where path = the path name for where you downloaded the build folder.
-  5. To play a game, enter the command 'p'
+  5. To play a game, enter the command 'p', every other command will not work except play and quit, unless you are me.
   
 ## How it Works
 To find the probabilities it runs the program like normal except it has three computer players who always call. It finds all the possible hands you can have in poker starting from 2S2C to ASAH, it only checks the hands with a spade because it doesn't need to check for each suit since it won't have an impact on the probabilities and so we have less hands to check to make the process more efficient and the data easier to understand.
