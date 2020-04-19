@@ -47,5 +47,8 @@ There are also small spikes when a hand has two cards with the same suit, about 
 
 You should put a bet in if you have a pair in your hand and you should not bet much money in if both of your cards are less than a 10, however if you have cards with the same suit then you may think about betting more money than otherwise. I didn't see any obvious increase for a straight draw, most likely because it is not a big enough increase in winning than having better cards.
 
-James Bird-Sycamore
-Last Updated: 18/04/2020
+### Other packages used
+JSON Simple https://code.google.com/archive/p/json-simple/ 
+
+Made by James Bird-Sycamore
+Last Updated: 20/04/2020
